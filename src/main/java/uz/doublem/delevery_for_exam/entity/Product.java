@@ -5,8 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -17,10 +20,16 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(unique = true, nullable = false)
     private String productName;
     private String description;
     private Double price;
-    private Integer categoryId;
-    private Date createdAt;
+    @ManyToOne
+    @JoinColumn(name = "categoryId")
+    private Category category;
+    @CreationTimestamp
+    private Timestamp createdAt;
+    @OneToMany(mappedBy = "product")
+    private List<ProductImages> productImages;
+    @OneToMany(mappedBy = "product")
+    private List<SuperProduct> superProducts;
 }

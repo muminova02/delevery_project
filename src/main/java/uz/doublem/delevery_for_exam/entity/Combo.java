@@ -1,6 +1,10 @@
 package uz.doublem.delevery_for_exam.entity;
 
-import jakarta.persistence.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,25 +13,20 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-public class Basket {
+public class Combo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    private Users user;
+    private String productName;
+    private String description;
+    private Double price;
+    private Integer categoryId;
     @CreationTimestamp
     private Timestamp createdAt;
-    private boolean isActive;
-    private String deviceId;
-
-    @OneToMany(mappedBy = "basket")
-    private List<BasketItems> basketItems;
 }

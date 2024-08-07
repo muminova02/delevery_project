@@ -1,14 +1,13 @@
 package uz.doublem.delevery_for_exam.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Data
@@ -20,7 +19,11 @@ public class BasketItems {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int basketId;
-    private int productId;
-    private Date addedAt;
+    @ManyToOne
+    @JoinColumn(name = "basketId")
+    private Basket basket;
+    @ManyToOne
+    private Product product;
+    @CreationTimestamp
+    private Timestamp addedAt;
 }

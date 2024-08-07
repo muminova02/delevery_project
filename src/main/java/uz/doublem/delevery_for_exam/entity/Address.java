@@ -1,14 +1,13 @@
 package uz.doublem.delevery_for_exam.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Data
@@ -20,10 +19,13 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer userId;
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private Users user;
     private String addressLine1;
     private String addressLine2;
     private String city;
     private String state;
-    private Date createdAt;
+    @CreationTimestamp
+    private Timestamp createdAt;
 }

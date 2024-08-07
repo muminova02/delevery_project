@@ -5,7 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -16,12 +20,25 @@ public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String username;
-    private String passwordHash;
+    @Column(unique = true, nullable = false)
+    private String email;
+    private String phone_number;
+    private String password;
     private String firstName;
     private String lastName;
     private Date dateOfBirth;
-    private Date createdAt;
-    private boolean isActive;
-    private boolean IsDeleted = false;
+    @CreationTimestamp
+    private Timestamp createdAt;
+    @Builder.Default
+    private boolean isActive=false;
+    private boolean isDeleted = false;
+
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders;
+
+    @OneToMany(mappedBy = "user")
+    private List<Address> addresses;
+
+    @OneToMany(mappedBy = "user")
+    private List<Payment> payments;
 }

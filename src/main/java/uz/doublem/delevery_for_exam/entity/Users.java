@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.Date;
 
 @Data
@@ -13,14 +12,16 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Product {
+public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(unique = true, nullable = false)
-    private String productName;
-    private String description;
-    private Double price;
-    private Integer categoryId;
+    private String username;
+    private String passwordHash;
+    private String firstName;
+    private String lastName;
+    private Date dateOfBirth;
     private Date createdAt;
+    private boolean isActive;
+    private boolean IsDeleted = false;
 }

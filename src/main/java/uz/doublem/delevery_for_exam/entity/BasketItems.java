@@ -1,6 +1,9 @@
 package uz.doublem.delevery_for_exam.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,14 +16,11 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Product {
+public class BasketItems {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    @Column(unique = true, nullable = false)
-    private String productName;
-    private String description;
-    private Double price;
-    private Integer categoryId;
-    private Date createdAt;
+    private int id;
+    private int basketId;
+    private int productId;
+    private Date addedAt;
 }

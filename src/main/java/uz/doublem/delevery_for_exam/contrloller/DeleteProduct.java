@@ -1,11 +1,11 @@
-package uz.app.ormapp.controller;
+package uz.doublem.delevery_for_exam.contrloller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import uz.app.ormapp.repository.ProductRepository;
+import uz.doublem.delevery_for_exam.repository.ProductRepository;
 
 import java.io.IOException;
 

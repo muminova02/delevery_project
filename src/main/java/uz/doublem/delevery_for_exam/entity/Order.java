@@ -7,10 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -28,13 +25,13 @@ public class Order {
     private Timestamp orderDate;
     private double totalAmount;
     private String status;
+    @OneToOne
+    private Address address;
     @ManyToOne
     @JoinColumn(name = "basketId")
     private Basket basket;
-    @ManyToMany
-    @JoinTable(
-            name = "Order_Cupons",
-            joinColumns = @JoinColumn(name = "orderId"),
-            inverseJoinColumns = @JoinColumn(name = "cuponId"))
-    private List<Cupon> cupons;
+    @ManyToOne
+    private Cupon cupons;
+    @OneToOne
+    private Payment payment;
 }

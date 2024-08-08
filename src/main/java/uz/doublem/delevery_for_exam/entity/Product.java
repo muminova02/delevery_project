@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -30,6 +29,5 @@ public class Product {
     private Timestamp createdAt;
     @OneToMany(mappedBy = "product")
     private List<ProductImages> productImages;
-    @OneToMany(mappedBy = "product")
-    private List<SuperProduct> superProducts;
+
 }

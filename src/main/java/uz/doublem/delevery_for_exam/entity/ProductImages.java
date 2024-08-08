@@ -18,9 +18,6 @@ public class ProductImages {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne
-    @JoinColumn(name = "productId")
-    private Product product;
     private String imageURL;
     @CreationTimestamp
     private Timestamp createdAt;

@@ -22,7 +22,4 @@ public class Cupon {
     private boolean isActive;
     @CreationTimestamp
     private Timestamp createdAt;
-
-    @ManyToMany(mappedBy = "cupons")
-    private List<Order> orders;
 }

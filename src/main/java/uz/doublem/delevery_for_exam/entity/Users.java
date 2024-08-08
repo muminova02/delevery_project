@@ -18,8 +18,8 @@ import java.util.List;
 @Entity
 public class Users {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
     @Column(unique = true, nullable = false)
     private String email;
     private String phone_number;
@@ -30,15 +30,14 @@ public class Users {
     @CreationTimestamp
     private Timestamp createdAt;
     @Builder.Default
-    private boolean isActive=false;
+    private boolean isActive = false;
+    @Builder.Default
+    private Role role = Role.USER;
     private boolean isDeleted = false;
-
+    @Builder.Default
+    private Boolean hasConfirmed = false;
+    private String code;
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
 
-    @OneToMany(mappedBy = "user")
-    private List<Address> addresses;
-
-    @OneToMany(mappedBy = "user")
-    private List<Payment> payments;
 }

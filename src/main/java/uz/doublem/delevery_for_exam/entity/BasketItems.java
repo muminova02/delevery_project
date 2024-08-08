@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -18,7 +17,7 @@ import java.util.Date;
 public class BasketItems {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     @ManyToOne
     @JoinColumn(name = "basketId")
     private Basket basket;

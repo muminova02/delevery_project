@@ -19,9 +19,6 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    private Users user;
     private String addressLine1;
     private String addressLine2;
     private String city;

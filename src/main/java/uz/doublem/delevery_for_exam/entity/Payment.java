@@ -19,9 +19,6 @@ public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    private Users user;
     private String paymentType;
     private String provider;
     private String accountNumber;

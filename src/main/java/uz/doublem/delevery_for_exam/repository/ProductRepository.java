@@ -2,17 +2,17 @@ package uz.doublem.delevery_for_exam.repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 import uz.doublem.delevery_for_exam.entity.Product;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductRepository {
-    EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("HIBERNATE-UNIT");
-    EntityManager entityManager = entityManagerFactory.createEntityManager();
+    EntityManagerFactory entityManagerFactory = Configurations.getEntityManagerFactory();
+
 
     public void add(Product product) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
 
             entityManager.getTransaction().begin();
@@ -23,6 +23,7 @@ public class ProductRepository {
     }
 
     public List<Product> getProductByName(String name) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
         List resultList;
         try {
             entityManager.getTransaction().begin();
@@ -34,7 +35,7 @@ public class ProductRepository {
     }
 
     public void edit(Product product) {
-
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
 
             entityManager.getTransaction().begin();
@@ -46,6 +47,7 @@ public class ProductRepository {
 
 
     public List<Product> getAll() {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
         List resultList = new ArrayList();
         try {
 
@@ -68,11 +70,13 @@ public class ProductRepository {
     }
 
     public Product get(String id) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
         Product product = entityManager.find(Product.class, id);
         return product;
     }
 
     public void delete(int id) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
 
             entityManager.getTransaction().begin();

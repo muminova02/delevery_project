@@ -1,4 +1,5 @@
-package uz.doublem.delevery_for_exam.contrloller;
+package uz.doublem.delevery_for_exam.contrloller.admin;
+
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -9,29 +10,22 @@ import uz.doublem.delevery_for_exam.entity.Product;
 import uz.doublem.delevery_for_exam.repository.ProductRepository;
 
 import java.io.IOException;
+import java.util.List;
 
-@WebServlet("/edit")
-public class EditProduct extends HttpServlet {
+@WebServlet("/product")
+public class ProductController extends HttpServlet {
 
     ProductRepository repository = ProductRepository.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String id = req.getParameter("id");
-        req.setAttribute("product", null);
-        if (id != null) {
-            Product product = repository.get(id);
-            req.setAttribute("product", product);
-            req.getRequestDispatcher("/views/edit_product.jsp").forward(req, resp);
-        }else {
-            resp.getWriter().write("product not found");
-            return;
-        }
+        List<Product> products = repository.getAll();
+        req.setAttribute("products", products);
+        req.getRequestDispatcher("/views/product.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Integer id = Integer.parseInt(req.getParameter("id"));
         String name = req.getParameter("name");
         String description = req.getParameter("description");
         Double price = Double.parseDouble(req.getParameter("price"));
@@ -39,11 +33,11 @@ public class EditProduct extends HttpServlet {
 
                 Product
                         .builder()
-                        .id(id)
                         .productName(name)
                         .description(description)
                         .price(price)
                         .build();
-        repository.edit(product);
+        repository.add(product);
+        resp.sendRedirect("/product");
     }
 }

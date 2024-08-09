@@ -63,8 +63,8 @@ public class AuthService {
                 .email(email)
                 .password(password)
                 .phone_number(phoneNumber)
+                .code(generateCode())
                 .build();
-        user.setCode(generateCode());
         userRepository.saveUser(user);
         String text = user.getEmail() + ":" + user.getCode();
         final String message = new String(Base64.getEncoder().encode(text.getBytes()));
@@ -76,7 +76,7 @@ public class AuthService {
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
         for (int i = 0; i < 6; i++) {
-            sb.append(random.nextInt(0, 10));
+            sb.append(random.nextInt(10));
         }
         return sb.toString();
     }

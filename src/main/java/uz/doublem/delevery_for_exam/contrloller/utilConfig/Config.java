@@ -17,27 +17,29 @@ import static uz.doublem.delevery_for_exam.contrloller.utilConfig.Utils.getCooki
 
 @WebFilter("/*")
 public class Config implements Filter {
-    UserRepository userRepository = UserRepository.getInstance();
+//    UserRepository userRepository = UserRepository.getInstance();
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
 
-        Cookie identity = getCookie(req, "identity");
-        if (req.getRequestURI().contains("/admin") ) {
-            if (identity != null){
-                Optional<Users> optionalUser = userRepository.getUserById(new String(Base64.getDecoder().decode(identity.getValue().getBytes())));
-                if (optionalUser.isPresent() && optionalUser.get().getRole().equals(Role.ADMIN)) {
-                    filterChain.doFilter(servletRequest, servletResponse);
-                    return;
-                }
-            }
+//        Cookie identity = getCookie(req, "identity");
+//        if (req.getRequestURI().contains("/admin/**") ) {
+//            if (identity != null){
+//                Optional<Users> optionalUser = userRepository.getUserById(new String(Base64.getDecoder().decode(identity.getValue().getBytes())));
+//                if (optionalUser.isPresent() && optionalUser.get().getRole().equals(Role.ADMIN)) {
+//                    filterChain.doFilter(servletRequest, servletResponse);
+//                    return;
+//                }
+//            }
+//
+//            throw new RuntimeException("401 unauthorized");
+//        }
+//        System.out.println("here is users ip => " + servletRequest.getRemoteAddr());
+//        System.out.println(req.getRequestURI());
+//        System.out.println("-------------");
+//        filterChain.doFilter(servletRequest, servletResponse);
 
-            throw new RuntimeException("401 unauthorized");
-        }
-        System.out.println("here is users ip => " + servletRequest.getRemoteAddr());
-        System.out.println(req.getRequestURI());
-        System.out.println("-------------");
         filterChain.doFilter(servletRequest, servletResponse);
     }
 }

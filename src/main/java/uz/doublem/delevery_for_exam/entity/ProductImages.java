@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 
 @Data
@@ -17,7 +18,9 @@ import java.util.Date;
 public class ProductImages {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
+    @OneToMany(mappedBy = "id")
+    private List<Product> product;
     private String imageURL;
     @CreationTimestamp
     private Timestamp createdAt;

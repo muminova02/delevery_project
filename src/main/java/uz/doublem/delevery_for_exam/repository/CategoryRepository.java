@@ -2,56 +2,59 @@ package uz.doublem.delevery_for_exam.repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import uz.doublem.delevery_for_exam.entity.Category;
 import uz.doublem.delevery_for_exam.entity.Product;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductRepository {
+public class CategoryRepository {
     EntityManagerFactory entityManagerFactory = Configurations.getEntityManagerFactory();
 
 
-    public void add(Product product) {
+    public void add(Category category) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
 
             entityManager.getTransaction().begin();
-            entityManager.persist(product);
+            entityManager.persist(category);
         } finally {
             entityManager.getTransaction().commit();
         }
     }
 
-    public List<Product> getProductByName(String name) {
+    public List<Category> getCategoryByName(String name) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         List resultList;
         try {
             entityManager.getTransaction().begin();
-            resultList = entityManager.createNativeQuery("select * from product where name = '';", Product.class).getResultList();
+            resultList = entityManager.createNativeQuery("select * from category where name = '';", Category.class).getResultList();
         } finally {
             entityManager.getTransaction().commit();
         }
         return resultList;
     }
 
-    public void edit(Product product) {
+    public void edit(Category category) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
 
             entityManager.getTransaction().begin();
-            entityManager.merge(product);
+            entityManager.merge(category);
         } finally {
             entityManager.getTransaction().commit();
         }
     }
 
 
-    public List<Product> getAll() {
+    public List<Category> getAll() {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         List resultList = new ArrayList();
         try {
+
             entityManager.getTransaction().begin();
-            resultList = entityManager.createNativeQuery("select * from product", Product.class).getResultList();
+            resultList = entityManager.createNativeQuery("select * from category", Category.class).getResultList();
         } finally {
             entityManager.getTransaction().commit();
         }
@@ -59,19 +62,25 @@ public class ProductRepository {
 
     }
 
-    private static ProductRepository instance;
+    private static CategoryRepository instance;
 
-    public static ProductRepository getInstance() {
+    public static CategoryRepository getInstance() {
         if (instance == null) {
-            instance = new ProductRepository();
+            instance = new CategoryRepository();
         }
         return instance;
     }
 
-    public Product get(String id) {
+    public Category get(String id) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        Product product = entityManager.find(Product.class, id);
-        return product;
+        try {
+            Integer id1 = Integer.valueOf(id);
+            entityManager.getTransaction().begin();
+            return entityManager.find(Category.class, id1);
+        }finally {
+            entityManager.getTransaction().commit();
+            entityManager.close();
+        }
     }
 
     public void delete(int id) {
@@ -79,8 +88,8 @@ public class ProductRepository {
         try {
 
             entityManager.getTransaction().begin();
-            Product product = entityManager.find(Product.class, id);
-            entityManager.remove(product);
+            Category category = entityManager.find(Category.class, id);
+            entityManager.remove(category);
         } finally {
 
             entityManager.getTransaction().commit();

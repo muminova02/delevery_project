@@ -18,7 +18,11 @@ public class SuperProduct {
     @JoinColumn(name = "productId")
     private Product product;
     @ManyToMany
-    @JoinColumn(name = "comboId")
+    @JoinTable(
+            name = "SuperProduct_Combo",
+            joinColumns = @JoinColumn(name = "superProductId"),
+            inverseJoinColumns = @JoinColumn(name = "comboId")
+    )
     private List<Combo> combo;
     private boolean isOptional;
     private boolean isActive;

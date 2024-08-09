@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.NavigableMap;
 
 @Data
 @AllArgsConstructor
@@ -27,7 +28,8 @@ public class Product {
     private Category category;
     @CreationTimestamp
     private Timestamp createdAt;
-    @OneToMany(mappedBy = "product")
-    private List<ProductImages> productImages;
+    @ManyToOne
+    @JoinColumn(name = "productImagesId")
+    private ProductImages productImages;
 
 }

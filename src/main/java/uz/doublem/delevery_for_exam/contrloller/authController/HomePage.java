@@ -19,7 +19,7 @@ public class HomePage extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (authService.authorization(req, resp)) {
             if (((Users) req.getAttribute("user")).getRole().equals(Role.ADMIN)) {
-                req.getRequestDispatcher("/views/admin-home.jsp").forward(req, resp);
+                req.getRequestDispatcher("/views/admin").forward(req, resp);
             }
         }
         req.setAttribute("message","something went wrong please sign in again");

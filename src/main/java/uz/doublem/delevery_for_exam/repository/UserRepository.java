@@ -1,10 +1,13 @@
 package uz.doublem.delevery_for_exam.repository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.AccessLevel;
 import lombok.Cleanup;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
+import uz.doublem.delevery_for_exam.entity.Product;
 import uz.doublem.delevery_for_exam.entity.Users;
 
 import java.sql.Connection;
@@ -18,22 +21,34 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserRepository {
 
-    @SneakyThrows
+    EntityManagerFactory entityManagerFactory = Configurations.getEntityManagerFactory();
+
+
+
+    public void save(Users user) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            entityManager.persist(user);
+        } finally {
+            entityManager.getTransaction().commit();
+            entityManager.close();
+        }
+    }
+
     public List<Users> getUsers() {
         return null;
     }
 
-    @SneakyThrows
     public void saveUser(Users user) {
     }
 
-    @SneakyThrows
     public Optional<Users> getUserByEmail(String email) {
 
         return Optional.empty();
 
     }
-    @SneakyThrows
+
     public void delete(String id) {
 
     }
@@ -51,10 +66,17 @@ public class UserRepository {
         return userRepository;
     }
 
-    @SneakyThrows
-    public Optional<Users> getUserById(String id) {
 
-        return Optional.empty();
+    public Optional<Users> getUserById(String id) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            Users user = entityManager.find(Users.class, id);
+            return Optional.of(user);
+        }catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            return Optional.empty();
+        }
     }
 
     private Users getUser() throws SQLException {

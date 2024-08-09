@@ -37,6 +37,7 @@ public class AdminController extends HttpServlet {
                             req.setAttribute("users", userRepository.getUsers());
                             req.setAttribute("exists", true);
                             req.setAttribute("user", user);
+                            req.getRequestDispatcher("/views/admin_main.jsp").forward(req, resp);
                             return;
                         } else {
                             req.getRequestDispatcher("views/index.jsp").forward(req, resp);

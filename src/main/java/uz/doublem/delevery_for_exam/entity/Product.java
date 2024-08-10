@@ -20,7 +20,7 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String productName;
+    private String name;
     private String description;
     private Double price;
     @ManyToOne
@@ -31,5 +31,6 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "productImagesId")
     private ProductImages productImages;
-
+    @Builder.Default
+    private boolean isActive = true;
 }

@@ -46,18 +46,23 @@ public class ProductRepository {
     }
 
 
-    public List<Product> getAll() {
+    public <T> List getAll(Class<T> entityType) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        List resultList = new ArrayList();
+        List resultList = new ArrayList<T>();
         try {
+
             entityManager.getTransaction().begin();
-            resultList = entityManager.createNativeQuery("select * from product", Product.class).getResultList();
+            String query = String.format("SELECT * FROM %s", entityType.getSimpleName());
+            resultList = entityManager.createNativeQuery(query, entityType).getResultList();
+            return resultList;
         } finally {
             entityManager.getTransaction().commit();
+            entityManager.close();
         }
-        return resultList;
 
     }
+
+
 
     private static ProductRepository instance;
 
@@ -84,6 +89,23 @@ public class ProductRepository {
         } finally {
 
             entityManager.getTransaction().commit();
+        }
+    }
+
+    public boolean updateProductActive(String productId, boolean b) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            Product product = entityManager.find(Product.class, productId);
+            product.setActive(b);
+            entityManager.merge(product);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+        finally {
+            entityManager.getTransaction().commit();
+            entityManager.close();
         }
     }
 }

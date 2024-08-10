@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import uz.doublem.delevery_for_exam.entity.Category;
+import uz.doublem.delevery_for_exam.entity.Combo;
 import uz.doublem.delevery_for_exam.entity.Product;
 import uz.doublem.delevery_for_exam.repository.CategoryRepository;
 import uz.doublem.delevery_for_exam.repository.ProductRepository;
@@ -25,8 +26,10 @@ public class AdminMain extends HttpServlet {
             req.setAttribute("allCategory", all);
             req.getRequestDispatcher("/views/adminCategory.jsp").forward(req, resp);
         } else if (value.equals("product")) {
-            List<Product> all = productRepository.getAll();
-            req.setAttribute("allProduct", all);
+            List<Product> all = productRepository.getAll(Product.class);
+            req.setAttribute("product", all);
+            List<Combo> allCombo = productRepository.getAll(Combo.class);
+            req.setAttribute("combos",allCombo);
             req.getRequestDispatcher("/views/adminProduct.jsp").forward(req, resp);
         }
     }

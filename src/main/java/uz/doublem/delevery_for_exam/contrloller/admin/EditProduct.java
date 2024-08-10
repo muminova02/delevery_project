@@ -40,7 +40,7 @@ public class EditProduct extends HttpServlet {
                 Product
                         .builder()
                         .id(id)
-                        .productName(name)
+                        .name(name)
                         .description(description)
                         .price(price)
                         .build();

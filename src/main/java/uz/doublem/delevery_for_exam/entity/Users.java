@@ -26,7 +26,7 @@ public class Users {
     private String password;
     private String firstName;
     private String lastName;
-    private Date dateOfBirth;
+    private Timestamp dateOfBirth;
     @CreationTimestamp
     private Timestamp createdAt;
     @Builder.Default

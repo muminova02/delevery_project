@@ -56,7 +56,7 @@
     <a href="/admin/adminMainController?value=users">Show Users</a>
     <a href="/admin/adminMainController?value=orders">Show Orders</a>
     <div class="profile">
-        <img src="/views/attachments/userImage.png" alt="Profile" onclick="location.href='profile.jsp'"/>
+        <img src="/views/attachments/userImage.png" alt="Profile" onclick="location.href='/profile?id=${user.id}'"/>
 <%--        <p><c:out value="${user}"/></p>--%>
     </div>
 </div>

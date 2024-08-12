@@ -28,6 +28,7 @@ public class UserRepository {
     public void save(Users user) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
+
             entityManager.getTransaction().begin();
             entityManager.persist(user);
         } finally {
@@ -79,8 +80,14 @@ public class UserRepository {
         }
     }
 
-    private Users getUser() throws SQLException {
+    public void update(Users user) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        try {
 
-        return null;
+            entityManager.getTransaction().begin();
+            entityManager.merge(user);
+        } finally {
+            entityManager.getTransaction().commit();
+        }
     }
 }

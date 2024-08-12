@@ -17,11 +17,13 @@ import java.util.List;
 @Entity
 public class ProductImages {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
     @OneToMany(mappedBy = "id")
     private List<Product> product;
-    private String imageURL;
+    private String attachmentName;
+    private String prefix;
+    private String attachmentSize;
     @CreationTimestamp
     private Timestamp createdAt;
 }

@@ -1,4 +1,7 @@
-<%--
+<%@ page import="uz.doublem.delevery_for_exam.service.CategoryService" %>
+<%@ page import="uz.doublem.delevery_for_exam.repository.CategoryRepository" %>
+<%@ page import="uz.doublem.delevery_for_exam.entity.Category" %>
+<%@ page import="java.util.List" %><%--
   Created by IntelliJ IDEA.
   User: Usmon
   Date: 8/9/2024
@@ -8,6 +11,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <html>
 <head>
@@ -158,6 +164,59 @@
             cursor: pointer;
             margin-bottom: 10px;
         }
+        /* Dropdown Styling */
+        .select-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .select-wrapper select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f2f2f2;
+            border: 1px solid #ddd;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .select-wrapper::after {
+            content: '\25BC'; /* Down arrow */
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            pointer-events: none;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .select-wrapper select:focus {
+            border-color: #0275d8;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .select-wrapper select:hover {
+            background-color: #e9ecef;
+        }
+        .card-image {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            /*padding: 10px;*/
+        }
+        .card-image img {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+        }
+
     </style>
 
 </head>
@@ -187,6 +246,7 @@
             <th>isActive</th>
             <th>doBlock</th>
             <th>Action</th>
+            <th>Image</th>
         </tr>
         <c:forEach items="${product}" var="pr">
             <tr>
@@ -194,7 +254,7 @@
                 <td><c:out value="${pr.getName()}"/></td>
                 <td><c:out value="${pr.getDescription()}"/></td>
                 <td><c:out value="${pr.getPrice()}"/></td>
-                <td><c:out value="${pr.getCategory().getId()}"/></td>
+                <td><c:out value="${pr.getCategory().getName()}"/></td>
                 <td><c:out value="${pr.getCreatedAt()}"/></td>
                 <td><c:out value="${pr.isActive()}"/></td>
                 <td>
@@ -205,10 +265,14 @@
                         <c:if test="${!pr.isActive()}">Unconfirmed</c:if>
                     </button>
                 </td>
-
                 <td>
-                    <button class="btn edit" onclick="editProduct(${pr.getId()}, '${pr.getName()}','${pr.getDescription()}',${pr.getPrice()},${pr.getCategory().getId()})">Edit</button>
+                    <button class="btn edit" onclick="editProduct(${pr.getId()}, '${pr.getName()}','${pr.getDescription()}',${pr.getPrice()},${pr.getCategory().getId()},'${pr.getCategory().getName()}')">Edit</button>
                     <button class="btn delete" onclick="deleteProduct(${pr.getId()})">Delete</button>
+                </td>
+                <td>
+                    <div class="card-image">
+                        <img src="/download?id=${pr.getProductImages().getId()}" alt="${pr.getName()}">
+                    </div>
                 </td>
             </tr>
         </c:forEach>
@@ -226,6 +290,9 @@
                 <th>category</th>
                 <th>created At</th>
                 <th>isActive</th>
+                <th>doBlock</th>
+                <th>Action</th>
+                <th>Image</th>
             </tr>
             <c:forEach items="${combos}" var="cm">
                 <tr>
@@ -233,16 +300,31 @@
                     <td><c:out value="${cm.getName()}"/></td>
                     <td><c:out value="${cm.getDescription()}"/></td>
                     <td><c:out value="${cm.getPrice()}"/></td>
-                    <td><c:out value="${cm.getCategory().getId()}"/></td>
+                    <td><c:out value="${cm.getCategory().getName()}"/></td>
                     <td><c:out value="${cm.getCreatedAt()}"/></td>
                     <td><c:out value="${cm.isActive()}"/></td>
+                    <td>
+                        <button
+                                class="<c:if test="${cm.isActive()}">button-confirmed</c:if><c:if test="${!cm.isActive()}">button-unconfirmed</c:if>"
+                                onclick="toggleConfirmed('${cm.getId()}', '${cm.isActive()}')">
+                            <c:if test="${cm.isActive()}">Confirmed</c:if>
+                            <c:if test="${!cm.isActive()}">Unconfirmed</c:if>
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn edit" onclick="editProduct(${cm.getId()}, '${cm.getName()}','${cm.getDescription()}',${cm.getPrice()},${cm.getCategory().getId()},'${cm.getCategory().getName()}')">Edit</button>
+                        <button class="btn delete" onclick="deleteProduct(${cm.getId()})">Delete</button>
+                    </td>
+                    <td class="card-image">
+                            <img src="/download?id=${cm.getProductImages().getId()}" alt="${cm.getName()}">
+                    </td>
                 </tr>
             </c:forEach>
         </table>
     </div>
     <div id="categoryModal" class="modal">
         <div class="modal-content">
-            <h2 id="modalTitle">Add Category</h2>
+            <h2 id="modalTitle">Add Product</h2>
             <div class="form-group">
                 <label for="productName">Product Name</label>
                 <input type="text" id="productName" required>
@@ -250,8 +332,20 @@
                 <input type="text" id="productDescription" required>
                 <label for="productPrice">Product Price</label>
                 <input type="text" id="productPrice" required>
-                <label for="productCategory">Product Category</label>
-                <input type="text" id="productCategory" required>
+                <% CategoryRepository categoryRepository = CategoryRepository.getInstance();
+                    List<Category> all = categoryRepository.getAll(); %>
+                <div class="form-group">
+                    <label for="productCategory">Product Category</label>
+                    <div class="select-wrapper">
+                        <select id="productCategory" required>
+                            <option class="productCategory" value="" selected disabled></option>
+                            <% for (Category category : all) {%>
+                            <option value="<%= category.getId() %>"><%= category.getName() + " >> id:"+ category.getId() %></option>
+                            <% } %>
+                        </select>
+                    </div>
+                </div>
+
                 <input type="hidden" id="productId">
             </div>
             <button class="btn" onclick="saveCategory()">Save</button>
@@ -263,22 +357,24 @@
 
 
 <script>
+
     function showAddCProductModal() {
         document.getElementById('modalTitle').innerText = 'Add Product';
         document.getElementById('productName').value = '';
         document.getElementById('productDescription').value = '';
         document.getElementById('productPrice').value = '';
         document.getElementById('productCategory').value = '';
-        document.getElementById('productId').value = null;
+        document.getElementsByClassName('productCategory').innerText = 'choose category: ';
         document.getElementById('categoryModal').style.display = 'block';
     }
 
-    function editProduct(id, name,description,price,categoryId) {
+    function editProduct(id, name,description,price,categoryId,categoryName) {
         document.getElementById('modalTitle').innerText = 'Edit Product';
         document.getElementById('productName').value = name;
         document.getElementById('productDescription').value = description;
         document.getElementById('productPrice').value = price;
         document.getElementById('productCategory').value = categoryId;
+        document.getElementsByClassName('productCategory').innerText =categoryName;
         document.getElementById('productId').value = id;
         document.getElementById('categoryModal').style.display = 'block';
     }
@@ -352,6 +448,13 @@
             }
         });
     }
+
+    $(document).ready(function() {
+        $('#productCategory').select2({
+            placeholder: "Choose a category",
+            allowClear: true
+        });
+    });
 
 </script>
 </body>

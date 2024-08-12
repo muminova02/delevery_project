@@ -9,38 +9,21 @@ import uz.doublem.delevery_for_exam.entity.Category;
 import uz.doublem.delevery_for_exam.entity.Product;
 import uz.doublem.delevery_for_exam.repository.CategoryRepository;
 import uz.doublem.delevery_for_exam.repository.ProductRepository;
+import uz.doublem.delevery_for_exam.service.ProductService;
 
 import java.io.IOException;
 import java.util.HashMap;
 
 @WebServlet("/admin/saveProduct")
 public class SaveProductServlet  extends HttpServlet {
-    private ProductRepository productRepository = ProductRepository.getInstance();
+    ProductService productService = ProductService.getInstance();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getParameter("id") != null) {
-            String id = req.getParameter("id");
-            String name = req.getParameter("name");
-            if (name != null && !name.trim().isEmpty()) {
-                Product product = productRepository.get(id);
-                product.setName(name);
-                productRepository.edit(product);
-                resp.getWriter().write("success");
-            } else {
-                resp.getWriter().write("error");
-            }
+        if (req.getParameter("id") != null||!req.getParameter("id").isBlank()) {
+            productService.editProduct(req,resp);
         }else {
-            String name = req.getParameter("name");
-            if (name != null && !name.trim().isEmpty()) {
-                Product product = new Product();
-                product.setName(name);
-                productRepository.add(product);
-                resp.getWriter().write("success");
-            } else {
-                resp.getWriter().write("error");
-            }
+            productService.addProduct(req,resp);
         }
-
     }
 }

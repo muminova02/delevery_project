@@ -3,6 +3,7 @@ package uz.doublem.delevery_for_exam.repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import uz.doublem.delevery_for_exam.entity.Product;
+import uz.doublem.delevery_for_exam.service.ProductService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,15 +65,17 @@ public class ProductRepository {
 
 
 
-    private static ProductRepository instance;
+    private static ProductRepository productRepository;
 
     public static ProductRepository getInstance() {
-        if (instance == null) {
-            instance = new ProductRepository();
-        }
-        return instance;
+        if (productRepository == null)
+            synchronized (ProductRepository.class) {
+                if (productRepository == null) {
+                    productRepository = new ProductRepository();
+                }
+            }
+        return productRepository;
     }
-
     public Product get(String id) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         Product product = entityManager.find(Product.class, id);

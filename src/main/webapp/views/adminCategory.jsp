@@ -182,7 +182,6 @@
     function showAddCategoryModal() {
         document.getElementById('modalTitle').innerText = 'Add Category';
         document.getElementById('categoryName').value = '';
-        document.getElementById('categoryId').value = null;
         document.getElementById('categoryModal').style.display = 'block';
     }
 

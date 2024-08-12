@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import uz.doublem.delevery_for_exam.entity.Category;
 import uz.doublem.delevery_for_exam.entity.Product;
+import uz.doublem.delevery_for_exam.service.ProductService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,13 +63,16 @@ public class CategoryRepository {
 
     }
 
-    private static CategoryRepository instance;
+    private static CategoryRepository categoryRepository;
 
     public static CategoryRepository getInstance() {
-        if (instance == null) {
-            instance = new CategoryRepository();
-        }
-        return instance;
+        if (categoryRepository == null)
+            synchronized (CategoryRepository.class) {
+                if (categoryRepository == null) {
+                    categoryRepository = new CategoryRepository();
+                }
+            }
+        return categoryRepository;
     }
 
     public Category get(String id) {

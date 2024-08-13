@@ -34,9 +34,9 @@ public class ProductService {
     public void editProduct(HttpServletRequest req, HttpServletResponse resp) {
         String id = req.getParameter("id");
         String name = req.getParameter("name");
-        String productDescription = req.getParameter("productDescription");
-        String productPrice = req.getParameter("productPrice");
-        String productCategoryId = req.getParameter("productCategory");
+        String productDescription = req.getParameter("description");
+        String productPrice = req.getParameter("prise");
+        String productCategoryId = req.getParameter("category");
         Category category = categoryRepository.get(productCategoryId);
         if (name != null && !name.trim().isEmpty()) {
             Product product = productRepository.get(id);

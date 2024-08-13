@@ -21,6 +21,8 @@ public class ProductImages {
     private String id;
     @OneToMany(mappedBy = "id")
     private List<Product> product;
+    @OneToMany(mappedBy = "id")
+    private List<Combo> combos;
     private String attachmentName;
     private String prefix;
     private String attachmentSize;

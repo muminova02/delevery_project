@@ -19,7 +19,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet("/upload")
+@WebServlet("/admin/upload")
 @MultipartConfig
 public class UploadController extends HttpServlet {
 
@@ -54,11 +54,13 @@ public class UploadController extends HttpServlet {
         inputStream.close();
 
         if (productImage.getAttachmentName() != null) {
+            String productId = req.getParameter("productId");
             imageRepository.add(productImage);
+            imageRepository.reSetProductImage(productId,productImage);
+
         }
         List<ProductImages> imageProduct = imageRepository.getAll();
         req.setAttribute("imageProduct", imageProduct);
         System.out.println(imageProduct);
-        resp.sendRedirect("/images");
     }
 }

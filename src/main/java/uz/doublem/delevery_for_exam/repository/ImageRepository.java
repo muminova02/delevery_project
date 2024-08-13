@@ -3,6 +3,7 @@ package uz.doublem.delevery_for_exam.repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import uz.doublem.delevery_for_exam.entity.Category;
+import uz.doublem.delevery_for_exam.entity.Product;
 import uz.doublem.delevery_for_exam.entity.ProductImages;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.Optional;
 
 public class ImageRepository {
     EntityManagerFactory entityManagerFactory = Configurations.getEntityManagerFactory();
-
+ProductRepository productRepository = new ProductRepository();
 
     public void add(ProductImages productImages) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -63,6 +64,9 @@ public class ImageRepository {
     }
 
     public void reSetProductImage(String productId, ProductImages productImage) {
-
+        Product product=productRepository.get(productId);
+        product.setProductImages(productImage);
+        productRepository.edit(product);
     }
+
 }

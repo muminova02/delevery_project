@@ -19,7 +19,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet("/admin/upload")
+@WebServlet("/upload")
 @MultipartConfig
 public class UploadController extends HttpServlet {
 

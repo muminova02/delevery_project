@@ -349,18 +349,16 @@
     <div style="display: none" id="save-model-content-image" class="modal">
         <div class="modal-content">
             <span class="close" onclick="hideChangeImageModel()">&times;</span>
-            <form id="change-image-form" enctype="multipart/form-data" action="${pageContext.request.contextPath}/upload" method="post">
+            <form id="change-image-form" enctype="multipart/form-data" action="${pageContext.request.contextPath}/upload" method="post" onsubmit="submitChangeImageForm(Event)">
                 <div>
                     <input id="changeImagePrId" type="hidden" name="productId" value="">
                     <label for="file">Insert Image:</label>
                     <input type="file" id="file" name="file" required>
                 </div>
-                <button type="submit" onclick="submitChangeImageForm()">Import img</button>
+                <button type="submit">Import img</button>
             </form>
         </div>
     </div>
-    <button class="btn" onclick="showAddCProductModal()">Add Category</button>
-</div>
     <div class="container">
         <h1>Combo</h1>
         <table>
@@ -444,10 +442,12 @@
 
 
 <script>
-    function showChangeImageModel(id){
+
+    function showChangeImageModel(id) {
         var modal = document.getElementById('save-model-content-image');
         modal.style.display = 'block';
         document.getElementById('changeImagePrId').value = id;
+
 
         window.onclick = function(event) {
             if (event.target == modal) {
@@ -455,13 +455,32 @@
             }
         }
     }
+
+
     function hideChangeImageModel() {
         document.getElementById('save-model-content-image').style.display = 'none';
     }
 
-    function submitChangeImageForm() {
-        document.getElementById('save-model-content-image').submit();
-        hideChangeImageModel();
+
+    function submitChangeImageForm(event) {
+        event.preventDefault();
+        var form = document.getElementById('change-image-form');
+
+
+        var formData = new FormData(form);
+
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", form.action, true);
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                hideChangeImageModel();
+                location.reload();
+            }
+        };
+
+        xhr.send(formData);
     }
 
     function showAddCProductModal() {

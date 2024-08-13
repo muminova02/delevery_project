@@ -2,6 +2,7 @@ package uz.doublem.delevery_for_exam.repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import uz.doublem.delevery_for_exam.entity.Category;
 import uz.doublem.delevery_for_exam.entity.Product;
 import uz.doublem.delevery_for_exam.service.ProductService;
 
@@ -78,8 +79,14 @@ public class ProductRepository {
     }
     public Product get(String id) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        Product product = entityManager.find(Product.class, id);
-        return product;
+        try {
+            Integer id1 = Integer.valueOf(id);
+            entityManager.getTransaction().begin();
+            return entityManager.find(Product.class, id1);
+        }finally {
+            entityManager.getTransaction().commit();
+            entityManager.close();
+        }
     }
 
     public void delete(int id) {

@@ -62,4 +62,7 @@ public class ImageRepository {
         return imageRepository;
     }
 
+    public void reSetProductImage(String productId, ProductImages productImage) {
+
+    }
 }

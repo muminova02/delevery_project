@@ -63,7 +63,7 @@
             cursor: pointer;
         }
         .container {
-            max-width: 800px;
+            max-width: 1300px;
             margin: auto;
             background: #fff;
             padding: 20px;
@@ -81,6 +81,10 @@
         th, td {
             padding: 12px;
             border: 1px solid #ddd;
+            text-align: center;
+        }
+        .img-row{
+            padding: 0;
             text-align: center;
         }
         th {
@@ -216,7 +220,64 @@
             max-height: 400px;
             object-fit: cover;
         }
+        .thumbnail {
+            width: 150px;
+            height: auto;
+            cursor: pointer;
+        }
 
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Modal kontenti (rasm) */
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        /* Close tugmasi */
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        td img {
+            max-width: 200px; /* Tasvir kengligini tartibga soladi */
+            max-height: 200px; /* Tasvir balandligini tartibga soladi */
+            display: block; /* Rasmlarni blok darajasida ko'rsatadi */
+            margin: auto; /* Rasmlarni hujayra markaziga joylashtiradi */
+            object-fit: cover; /* Tasvir hajmini tartibga soladi va kesib tashlashga imkon beradi */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            table-layout: fixed; /* Jadval hujayralarining kengligini to'g'ri tartibga soladi */
+        }
     </style>
 
 </head>
@@ -247,6 +308,7 @@
             <th>doBlock</th>
             <th>Action</th>
             <th>Image</th>
+            <th>change Image</th>
         </tr>
         <c:forEach items="${product}" var="pr">
             <tr>
@@ -269,14 +331,34 @@
                     <button class="btn edit" onclick="editProduct(${pr.getId()}, '${pr.getName()}','${pr.getDescription()}',${pr.getPrice()},${pr.getCategory().getId()},'${pr.getCategory().getName()}')">Edit</button>
                     <button class="btn delete" onclick="deleteProduct(${pr.getId()})">Delete</button>
                 </td>
-                <td>
+                <td class="img-row">
                     <div class="card-image">
-                        <img src="/download?id=${pr.getProductImages().getId()}" alt="${pr.getName()}">
+                        <div class="gallery">
+                        <img class="myImg thumbnail" src="/download?id=${pr.getProductImages().getId()}" alt="${pr.getName()}">
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="edit-model-content-image">
+                        <button class="btn" onclick="showChangeImageModel(${pr.getId()})">Change Image</button>
                     </div>
                 </td>
             </tr>
         </c:forEach>
     </table>
+    <div style="display: none" id="save-model-content-image" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideChangeImageModel()">&times;</span>
+            <form id="change-image-form" enctype="multipart/form-data" action="${pageContext.request.contextPath}/upload" method="post">
+                <div>
+                    <input id="changeImagePrId" type="hidden" name="productId" value="">
+                    <label for="file">Insert Image:</label>
+                    <input type="file" id="file" name="file" required>
+                </div>
+                <button type="submit" onclick="submitChangeImageForm()">Import img</button>
+            </form>
+        </div>
+    </div>
     <button class="btn" onclick="showAddCProductModal()">Add Category</button>
 </div>
     <div class="container">
@@ -316,11 +398,17 @@
                         <button class="btn delete" onclick="deleteProduct(${cm.getId()})">Delete</button>
                     </td>
                     <td class="card-image">
-                            <img src="/download?id=${cm.getProductImages().getId()}" alt="${cm.getName()}">
+                        <div class="gallery">
+                            <img id="myImg2" class="thumbnail" src="/download?id=${cm.getProductImages().getId()}" alt="${cm.getName()}">
+                        </div>
                     </td>
                 </tr>
             </c:forEach>
         </table>
+    </div>
+    <div id="myModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="img01" alt="kaku" src="">
     </div>
     <div id="categoryModal" class="modal">
         <div class="modal-content">
@@ -345,7 +433,6 @@
                         </select>
                     </div>
                 </div>
-
                 <input type="hidden" id="productId">
             </div>
             <button class="btn" onclick="saveCategory()">Save</button>
@@ -357,6 +444,25 @@
 
 
 <script>
+    function showChangeImageModel(id){
+        var modal = document.getElementById('save-model-content-image');
+        modal.style.display = 'block';
+        document.getElementById('changeImagePrId').value = id;
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    }
+    function hideChangeImageModel() {
+        document.getElementById('save-model-content-image').style.display = 'none';
+    }
+
+    function submitChangeImageForm() {
+        document.getElementById('save-model-content-image').submit();
+        hideChangeImageModel();
+    }
 
     function showAddCProductModal() {
         document.getElementById('modalTitle').innerText = 'Add Product';
@@ -456,6 +562,27 @@
         });
     });
 
+
+</script>
+<script>
+    // Modalga tegishli elementlarni olish
+    var modal = document.getElementById("myModal");
+    var modalImg = document.getElementById("img01");
+
+    // Har bir kichik rasmga (thumbnail) 'click' hodisasini qo'shish
+    var thumbnails = document.getElementsByClassName("myImg");
+    for (let i = 0; i < thumbnails.length; i++) {
+        thumbnails[i].onclick = function () {
+            modal.style.display = "block";
+            modalImg.src = this.src; // Bosilgan rasmning URL manzilini modalga joylashtirish
+        }
+    }
+
+    // Modalni yopish uchun 'close' elementiga bosilganda
+    var span = document.getElementsByClassName("close")[0];
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
 </script>
 </body>
 </html>

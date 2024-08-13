@@ -1,10 +1,7 @@
 package uz.doublem.delevery_for_exam.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,9 +23,14 @@ public class Combo {
     private String name;
     private String description;
     private Double price;
-    private Integer categoryId;
+    @ManyToOne
+    @JoinColumn(name = "categoryId")
+    private Category category;
     @CreationTimestamp
     private Timestamp createdAt;
     @Builder.Default
     private boolean isActive = true;
+    @ManyToOne
+    @JoinColumn(name = "productImagesId")
+    private ProductImages productImages;
 }

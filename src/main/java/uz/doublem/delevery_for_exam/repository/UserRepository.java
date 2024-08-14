@@ -35,7 +35,6 @@ public class UserRepository {
             entityManager.close();
         }
     }
-
     public List<Users> getUsers() {
         return null;
     }
@@ -82,5 +81,23 @@ public class UserRepository {
     private Users getUser() throws SQLException {
 
         return null;
+    }
+
+
+    public boolean updateUserActive(String userId, boolean b) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            Users users = entityManager.find(Users.class, userId);
+            users.setActive(b);
+            entityManager.merge(users);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+        finally {
+            entityManager.getTransaction().commit();
+            entityManager.close();
+        }
     }
 }

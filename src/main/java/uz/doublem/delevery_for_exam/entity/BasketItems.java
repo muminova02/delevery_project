@@ -20,6 +20,7 @@ public class BasketItems {
     private Integer id;
     @ManyToOne
     @JoinColumn(name = "basketId")
+    @Enumerated(EnumType.STRING)
     private Basket basket;
     @ManyToOne
     private Product product;

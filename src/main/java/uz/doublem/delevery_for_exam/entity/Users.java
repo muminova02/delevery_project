@@ -32,6 +32,7 @@ public class Users {
     @Builder.Default
     private boolean isActive = false;
     @Builder.Default
+    @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
     private boolean isDeleted = false;
     @Builder.Default

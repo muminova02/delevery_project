@@ -27,6 +27,7 @@ public class Order {
     private double totalAmount;
     private String status;
     @OneToOne
+    @Enumerated(EnumType.STRING)
     private Address address;
     @ManyToOne
     @JoinColumn(name = "basketId")

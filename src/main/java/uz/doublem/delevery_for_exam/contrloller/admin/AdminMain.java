@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import uz.doublem.delevery_for_exam.entity.Category;
 import uz.doublem.delevery_for_exam.entity.Combo;
 import uz.doublem.delevery_for_exam.entity.Product;
+import uz.doublem.delevery_for_exam.entity.Users;
 import uz.doublem.delevery_for_exam.repository.CategoryRepository;
 import uz.doublem.delevery_for_exam.repository.ProductRepository;
 
@@ -31,6 +32,10 @@ public class AdminMain extends HttpServlet {
             List<Combo> allCombo = productRepository.getAll(Combo.class);
             req.setAttribute("combos",allCombo);
             req.getRequestDispatcher("/views/adminProduct.jsp").forward(req, resp);
+        }else if (value.equals("users")) {
+            List<Users> all = productRepository.getAll(Users.class);
+            req.setAttribute("users", all);
+            req.getRequestDispatcher("/views/adminUsers.jsp").forward(req, resp);
         }
     }
 

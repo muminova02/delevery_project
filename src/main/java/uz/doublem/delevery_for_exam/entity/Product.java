@@ -25,6 +25,7 @@ public class Product {
     private Double price;
     @ManyToOne
     @JoinColumn(name = "categoryId")
+    @Enumerated(EnumType.STRING)
     private Category category;
     @CreationTimestamp
     private Timestamp createdAt;

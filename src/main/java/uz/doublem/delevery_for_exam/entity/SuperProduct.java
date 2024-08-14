@@ -16,6 +16,7 @@ public class SuperProduct {
     private Integer id;
     @OneToOne
     @JoinColumn(name = "productId")
+    @Enumerated(EnumType.STRING)
     private Product product;
     @ManyToMany
     @JoinTable(

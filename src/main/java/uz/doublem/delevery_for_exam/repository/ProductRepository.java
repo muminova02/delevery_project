@@ -2,8 +2,11 @@ package uz.doublem.delevery_for_exam.repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.TypedQuery;
 import uz.doublem.delevery_for_exam.entity.Category;
+import uz.doublem.delevery_for_exam.entity.Combo;
 import uz.doublem.delevery_for_exam.entity.Product;
+import uz.doublem.delevery_for_exam.entity.SuperProduct;
 import uz.doublem.delevery_for_exam.service.ProductService;
 
 import java.util.ArrayList;
@@ -118,4 +121,75 @@ public class ProductRepository {
             entityManager.close();
         }
     }
+
+    public void addCombo2(Combo combo){
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            entityManager.persist(combo);
+        }finally {
+            entityManager.getTransaction().commit();
+            entityManager.close();
+        }
+    }
+
+    public boolean addCombo(Combo combo, String[] productIds) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            // Combo'ni saqlash
+            addCombo2(combo);
+            // Har bir product uchun SuperProduct yaratish va Combo bilan bog'lash
+            for (String productId : productIds) {
+                Product product = get(productId);
+                if (product != null) {
+                    SuperProduct superProduct = new SuperProduct();
+                    superProduct.setProduct(product);
+                    superProduct.setCombo(List.of(combo));
+                    superProduct.setActive(true);
+                    superProduct.setOptional(false); // Agar optional bo'lsa o'zgartirishingiz mumkin
+                    // SuperProduct'ni saqlash
+                    entityManager.persist(superProduct);
+                }
+            }
+            entityManager.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+                return false;
+            }
+            e.printStackTrace(); // Xatolikni log qilishingiz mumkin
+        } finally {
+            entityManager.close();
+        }
+        return false;
+    }
+
+    public List<SuperProduct> getSuperProductByComboId(Integer comboId) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        List<SuperProduct> resultList = null;
+        try {
+            entityManager.getTransaction().begin();
+
+            // Query to fetch SuperProducts by Combo ID
+            String jpql = "SELECT sp FROM SuperProduct sp JOIN sp.combo c WHERE c.id = :comboId";
+            TypedQuery<SuperProduct> query = entityManager.createQuery(jpql, SuperProduct.class);
+            query.setParameter("comboId", comboId);
+            resultList = query.getResultList();
+
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            if (entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            entityManager.close();
+        }
+        return resultList;
+    }
+
+
+
 }

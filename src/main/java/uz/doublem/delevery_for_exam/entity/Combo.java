@@ -33,4 +33,5 @@ public class Combo {
     @ManyToOne
     @JoinColumn(name = "productImagesId")
     private ProductImages productImages;
+
 }

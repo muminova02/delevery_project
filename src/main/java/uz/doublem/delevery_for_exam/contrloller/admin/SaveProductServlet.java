@@ -20,7 +20,7 @@ public class SaveProductServlet  extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getParameter("id") != null||!req.getParameter("id").isBlank()) {
+        if (req.getParameter("id") != null&&!req.getParameter("id").isBlank()) {
             productService.editProduct(req,resp);
         }else {
             productService.addProduct(req,resp);

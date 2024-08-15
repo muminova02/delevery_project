@@ -38,16 +38,22 @@ public class UploadController extends HttpServlet {
         System.out.println(file.getSubmittedFileName());
         InputStream inputStream = file.getInputStream();
         String fileName = file.getSubmittedFileName();
+        String substring = fileName.substring(0, fileName.lastIndexOf("."));
+        ProductImages productImages = imageRepository.get(substring);
+        if (productImages!=null&&productImages.getId()!=null){
+            String productId = req.getParameter("productId");
+            imageRepository.reSetProductImage(productId,productImages);
+            resp.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
         productImage.setAttachmentName(fileName.substring(0, fileName.lastIndexOf(".")));
         productImage.setPrefix(fileName.substring(fileName.lastIndexOf(".")));
         productImage.setAttachmentSize(String.valueOf(file.getSize()));
-
         // Check if directory exists, create if not
         Path directory = Paths.get(DEFAULT_PATH);
         if (Files.notExists(directory)) {
             Files.createDirectories(directory);
         }
-
         // Set the path dynamically
         Path dest = directory.resolve(productImage.getId() + productImage.getPrefix());
         Files.copy(inputStream, dest, StandardCopyOption.REPLACE_EXISTING);
@@ -57,10 +63,9 @@ public class UploadController extends HttpServlet {
             String productId = req.getParameter("productId");
             imageRepository.add(productImage);
             imageRepository.reSetProductImage(productId,productImage);
-
+            resp.setStatus(HttpServletResponse.SC_OK);
+            return;
         }
-        List<ProductImages> imageProduct = imageRepository.getAll();
-        req.setAttribute("imageProduct", imageProduct);
-        System.out.println(imageProduct);
+        resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 }

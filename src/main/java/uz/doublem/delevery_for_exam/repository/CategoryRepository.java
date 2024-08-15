@@ -17,7 +17,6 @@ public class CategoryRepository {
     public void add(Category category) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
-
             entityManager.getTransaction().begin();
             entityManager.persist(category);
         } finally {

@@ -22,6 +22,18 @@ ProductRepository productRepository = new ProductRepository();
             entityManager.persist(productImages);
         } finally {
             entityManager.getTransaction().commit();
+            entityManager.close();
+        }
+    }
+    public void edit(ProductImages productImages) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        try {
+
+            entityManager.getTransaction().begin();
+            entityManager.merge(productImages);
+        } finally {
+            entityManager.getTransaction().commit();
+            entityManager.close();
         }
     }
     public ProductImages get(String id) {

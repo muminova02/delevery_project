@@ -1,13 +1,10 @@
-<%@ page import="uz.doublem.delevery_for_exam.service.CategoryService" %>
 <%@ page import="uz.doublem.delevery_for_exam.repository.CategoryRepository" %>
 <%@ page import="uz.doublem.delevery_for_exam.entity.Category" %>
-<%@ page import="java.util.List" %><%--
-  Created by IntelliJ IDEA.
-  User: Usmon
-  Date: 8/9/2024
-  Time: 3:53 PM
-  To change this template use File | Settings | File Templates.
---%>
+<%@ page import="java.util.List" %>
+<%@ page import="uz.doublem.delevery_for_exam.service.ProductService" %>
+<%@ page import="uz.doublem.delevery_for_exam.entity.Product" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.Map" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
@@ -15,6 +12,8 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <html>
 <head>
     <title>Product</title>
@@ -27,32 +26,40 @@
             background-color: #f4f4f4;
         }
         .navbar {
+            display: flex;
+            justify-content: space-between; /* Ensures space between links and profile */
+            align-items: center; /* Align items vertically in the center */
             background-color: #333;
-            overflow: hidden;
             padding: 1rem;
         }
+        .navbar .links {
+            display: flex;
+            gap: 1rem; /* Adds space between the links */
+        }
+
         .navbar a {
-            float: left;
-            display: block;
             color: #f2f2f2;
             text-align: center;
             padding: 14px 16px;
             text-decoration: none;
             font-size: 17px;
         }
+
         .navbar a:hover {
             background-color: #ddd;
             color: black;
         }
+
         .profile {
-            float: right;
             margin-right: 15px;
         }
+
         .profile img {
             border-radius: 50%;
             width: 40px;
             height: 40px;
         }
+
         .content {
             padding: 20px;
         }
@@ -129,7 +136,7 @@
             border-color: #0275d8;
             outline: none;
         }
-        .modal {
+        .modal,.modal2 {
             display: none;
             position: fixed;
             z-index: 1;
@@ -141,7 +148,7 @@
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.5);
         }
-        .modal-content {
+        .modal-content,.modal-content2 {
             background-color: #fff;
             margin: auto;
             padding: 20px;
@@ -226,7 +233,7 @@
             cursor: pointer;
         }
 
-        .modal {
+        .modal,.modal2 {
             display: none;
             position: fixed;
             z-index: 1;
@@ -240,7 +247,7 @@
         }
 
         /* Modal kontenti (rasm) */
-        .modal-content {
+        .modal-content,.modal-content2 {
             margin: auto;
             display: block;
             width: 80%;
@@ -248,7 +255,7 @@
         }
 
         /* Close tugmasi */
-        .close {
+        .close,.close2 {
             position: absolute;
             top: 15px;
             right: 35px;
@@ -259,6 +266,12 @@
             cursor: pointer;
         }
 
+        .close2:hover,
+        .close2:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
         .close:hover,
         .close:focus {
             color: #bbb;
@@ -283,11 +296,13 @@
 </head>
 <body>
 <div class="navbar">
+    <div class="links">
     <a href="/admin/adminMainController?value=category" >Category</a>
     <a href="/admin/adminMainController?value=product">Product</a>
     <a href="/admin/adminMainController?value=slaydBar">Add SlaydBar</a>
     <a href="/admin/adminMainController?value=users">Show Users</a>
     <a href="/admin/adminMainController?value=orders">Show Orders</a>
+    </div>
     <div class="profile">
         <img src="/views/attachments/userImage.png" alt="Profile" onclick="location.href='profile.jsp'"/>
     </div>
@@ -328,13 +343,20 @@
                     </button>
                 </td>
                 <td>
-                    <button class="btn edit" onclick="editProduct(${pr.getId()}, '${pr.getName()}','${pr.getDescription()}',${pr.getPrice()},${pr.getCategory().getId()},'${pr.getCategory().getName()}')">Edit</button>
+                    <button class="btn edit" onclick="editProduct(${pr.getId()}, '${pr.getName()}','${pr.getDescription()}',${pr.getPrice()},${pr.getCategory().getId()},'${pr.getCategory().getName()}','product')">Edit</button>
                     <button class="btn delete" onclick="deleteProduct(${pr.getId()})">Delete</button>
                 </td>
                 <td class="img-row">
                     <div class="card-image">
                         <div class="gallery">
-                        <img class="myImg thumbnail" src="/download?id=${pr.getProductImages().getId()}" alt="${pr.getName()}">
+                            <c:choose>
+                                <c:when test="${pr.getProductImages().getId() eq null}">
+                                    <img class=" myImg thumbnail" src="/views/attachments/defaultImage.jpg" alt="imageProduct">
+                                </c:when>
+                                <c:otherwise>
+                                    <img class=" myImg thumbnail" src="/download?id=${pr.getProductImages().getId()}" alt="${pr.getName()}">
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </div>
                 </td>
@@ -346,12 +368,12 @@
             </tr>
         </c:forEach>
     </table>
-    <div style="display: none" id="save-model-content-image" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="hideChangeImageModel()">&times;</span>
-            <form id="change-image-form" enctype="multipart/form-data" action="${pageContext.request.contextPath}/upload" method="post" onsubmit="submitChangeImageForm(Event)">
+    <div style="display: none" id="save-model-content-image" class="modal2">
+        <div class="modal-content2">
+            <span class="close2" onclick="hideChangeImageModel()">&times;</span>
+            <form id="change-image-form" enctype="multipart/form-data" action="/upload" method="post" onsubmit="submitChangeImageForm(Event)">
                 <div>
-                    <input id="changeImagePrId" type="hidden" name="productId" value="">
+                    <input id="changeImagePrId" type="hidden" name="productId" required>
                     <label for="file">Insert Image:</label>
                     <input type="file" id="file" name="file" required>
                 </div>
@@ -359,7 +381,9 @@
             </form>
         </div>
     </div>
-    <div class="container">
+    <button class="btn" onclick="showAddCProductModal('product')">Add Product</button>
+</div>
+<div class="container">
         <h1>Combo</h1>
         <table>
             <tr>
@@ -373,6 +397,7 @@
                 <th>doBlock</th>
                 <th>Action</th>
                 <th>Image</th>
+                <th>change Image</th>
             </tr>
             <c:forEach items="${combos}" var="cm">
                 <tr>
@@ -391,19 +416,35 @@
                             <c:if test="${!cm.isActive()}">Unconfirmed</c:if>
                         </button>
                     </td>
+
                     <td>
-                        <button class="btn edit" onclick="editProduct(${cm.getId()}, '${cm.getName()}','${cm.getDescription()}',${cm.getPrice()},${cm.getCategory().getId()},'${cm.getCategory().getName()}')">Edit</button>
+                        <button class="btn edit" onclick="editProduct(${cm.getId()}, '${cm.getName()}','${cm.getDescription()}',${cm.getPrice()},${cm.getCategory().getId()},'${cm.getCategory().getName()}','combo')">Edit</button>
                         <button class="btn delete" onclick="deleteProduct(${cm.getId()})">Delete</button>
                     </td>
-                    <td class="card-image">
-                        <div class="gallery">
-                            <img id="myImg2" class="thumbnail" src="/download?id=${cm.getProductImages().getId()}" alt="${cm.getName()}">
+                    <td class="img-row">
+                        <div class="card-image">
+                            <div class="gallery">
+                                <c:choose>
+                                    <c:when test="${cm.getProductImages().getId() eq null}">
+                                        <img class=" myImg thumbnail" src="/views/attachments/defaultImage.jpg" alt="imageProduct">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img class=" myImg thumbnail" src="/download?id=${cm.getProductImages().getId()}" alt="${cm.getName()}">
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="edit-model-content-image">
+                            <button class="btn" onclick="showChangeImageModel(${cm.getId()})">Change Image</button>
                         </div>
                     </td>
                 </tr>
             </c:forEach>
         </table>
-    </div>
+    <button class="btn" onclick="showAddCProductModal('combo')">Add Combo</button>
+</div>
     <div id="myModal" class="modal">
         <span class="close">&times;</span>
         <img class="modal-content" id="img01" alt="kaku" src="">
@@ -418,19 +459,40 @@
                 <input type="text" id="productDescription" required>
                 <label for="productPrice">Product Price</label>
                 <input type="text" id="productPrice" required>
-                <% CategoryRepository categoryRepository = CategoryRepository.getInstance();
-                    List<Category> all = categoryRepository.getAll(); %>
+                <%
+                    CategoryRepository categoryRepository = CategoryRepository.getInstance();
+                    List<Category> all = categoryRepository.getAll();
+                    ProductService productService = ProductService.getInstance();
+                    HashMap<Category, List<Product>> productsByCategory = productService.getProductsByCategory();
+                %>
                 <div class="form-group">
+                    <input type="hidden" id="typeForPC">
                     <label for="productCategory">Product Category</label>
                     <div class="select-wrapper">
                         <select id="productCategory" required>
                             <option class="productCategory" value="" selected disabled></option>
-                            <% for (Category category : all) {%>
-                            <option value="<%= category.getId() %>"><%= category.getName() + " >> id:"+ category.getId() %></option>
+                            <% for (Category category : all) { %>
+                            <option value="<%= category.getId() %>"><%= category.getName() + " >> id:" + category.getId() %></option>
                             <% } %>
                         </select>
                     </div>
                 </div>
+                <button id="comboOptionProduct" style="display: none" type="button" onclick="showComboProducts()" >Add Product in Combo</button>
+                <div id="productComboDiv" style="display: none;" class="checkboxes product_for_combo">
+                    <% for (Map.Entry<Category, List<Product>> entry : productsByCategory.entrySet()) { %>
+                    <h3><%= entry.getKey().getName() %></h3>
+                    <ul class="list-group">
+                        <% for (Product product : entry.getValue()) { %>
+                        <li class="list-group-item" id="ulComboProduct">
+                            <input class="form-check-input me-1" type="checkbox" value="<%= product.getId() %>" id="productCheckbox<%= product.getId() %>">
+                            <label class="form-check-label" for="productCheckbox<%= product.getId() %>"><%= product.getName() %></label>
+                        </li>
+                        <% } %>
+                    </ul>
+                    <% } %>
+                    <button type="button" onclick="document.getElementById('productComboDiv').style.display= 'none' ">OK</button>
+                </div>
+                <input type="hidden" id="chekboxesProductId">
                 <input type="hidden" id="productId">
             </div>
             <button class="btn" onclick="saveCategory()">Save</button>
@@ -438,6 +500,7 @@
         </div>
     </div>
 </div>
+
 
 
 
@@ -466,9 +529,7 @@
         event.preventDefault();
         var form = document.getElementById('change-image-form');
 
-
         var formData = new FormData(form);
-
 
         var xhr = new XMLHttpRequest();
         xhr.open("POST", form.action, true);
@@ -483,62 +544,136 @@
         xhr.send(formData);
     }
 
-    function showAddCProductModal() {
+    function showAddCProductModal(typeProduct) {
         document.getElementById('modalTitle').innerText = 'Add Product';
         document.getElementById('productName').value = '';
         document.getElementById('productDescription').value = '';
         document.getElementById('productPrice').value = '';
         document.getElementById('productCategory').value = '';
+        document.getElementById('productId').value = '';
         document.getElementsByClassName('productCategory').innerText = 'choose category: ';
+        document.getElementById('typeForPC').value =typeProduct;
+        if (typeProduct === "combo") {
+            // showComboProducts();
+            document.getElementById('comboOptionProduct').style.display = 'block';
+        } else {
+            document.getElementById('comboOptionProduct').style.display = 'none';
+            document.getElementById('productComboDiv').style.display = 'none'; // combo bo'lmasa yashirish
+        }
+
         document.getElementById('categoryModal').style.display = 'block';
     }
 
-    function editProduct(id, name,description,price,categoryId,categoryName) {
+    function editProduct(id, name, description, price, categoryId, categoryName, typeOfProduct) {
+
         document.getElementById('modalTitle').innerText = 'Edit Product';
         document.getElementById('productName').value = name;
         document.getElementById('productDescription').value = description;
         document.getElementById('productPrice').value = price;
         document.getElementById('productCategory').value = categoryId;
-        document.getElementsByClassName('productCategory').innerText =categoryName;
+        document.getElementsByClassName('productCategory').innerText = categoryName;
         document.getElementById('productId').value = id;
+        document.getElementById('typeForPC').value = '';
+
+
+        if(typeOfProduct === 'combo'){
+            console.log("type:",typeOfProduct);
+            let selectedProducts = '2,5';
+        // Agar selectedProducts string shaklida kelsa, uni arrayga aylantirish
+        if (typeof selectedProducts === 'string') {
+            selectedProducts = selectedProducts.split(',').map(Number);
+        }
+
+        // Combo mahsulotlar uchun checkboxlarni to'ldirish
+        if (selectedProducts && selectedProducts.length > 0) {
+            document.getElementById('typeForPC').style.display = 'block'; // checkboxlarni ko'rsatish
+
+            // Barcha checkboxlarni tekshirish
+            document.querySelectorAll('.product_for_combo input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;  // oldindan belgilarni tozalash
+            });
+
+            // Tanlangan mahsulotlarni belgili qilish
+            selectedProducts.forEach(productId => {
+                const checkbox = document.getElementById('productCheckbox' + productId);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+            document.getElementById('typeForPC').style.display = 'block'
+            document.getElementById('productComboDiv').style.display = 'block';
+        }
+        } else {
+            document.getElementById('typeForPC').style.display = 'none'
+            document.getElementById('productComboDiv').style.display = 'none'; // combo bo'lmasa yashirish
+        }
+
         document.getElementById('categoryModal').style.display = 'block';
     }
 
     function saveCategory() {
-        const productId = document.getElementById('productId').value; // Hidden field for category ID
+        const productId = document.getElementById('productId').value; // Hidden field for product ID
         const productName = document.getElementById('productName').value;
         const productDescription = document.getElementById('productDescription').value;
         const productPrice = document.getElementById('productPrice').value;
         const productCategory = document.getElementById('productCategory').value;
+        const productType = document.getElementById('typeForPC').value;
 
         if (productName.trim() === '') {
             alert('Product name cannot be empty!');
             return;
         }
 
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/admin/saveProduct', true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        document.querySelectorAll('.product_for_combo input[type="checkbox"]').forEach(checkbox => {
+            checkbox.checked = false;  // oldindan belgilarni tozalash
+        });
+        // Tanlangan mahsulotlarni yig'ish
+        const selectedProducts = [];
+        const checkboxes = document.querySelectorAll('.product_for_combo input[type="checkbox"]:checked');
+        checkboxes.forEach((checkbox) => {
+            selectedProducts.push(checkbox.value);
+        });
 
+        const xhr = new XMLHttpRequest();
+        if (productType === 'combo') {
+            const isCombo = selectedProducts.length > 0;
+            if(isCombo) {
+                xhr.open('POST', '/admin/saveCombo', true);
+            }else {
+                alert('Combos Product cannot be empty!');
+                return;
+            }
+        } else {
+            xhr.open('POST', '/admin/saveProduct', true); // Oddiy mahsulot uchun
+        }
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 alert('Product saved successfully!');
-                location.reload(); // Reload the page to update the category list
+                location.reload(); // Reload the page to update the product list
             }
         };
 
         xhr.send('id=' + encodeURIComponent(productId) +
             '&name=' + encodeURIComponent(productName) +
-            '&description=' +encodeURIComponent(productDescription) +
-            '&prise=' +encodeURIComponent(productPrice) +
-            '&category=' +encodeURIComponent(productCategory)
+            '&description=' + encodeURIComponent(productDescription) +
+            '&price=' + encodeURIComponent(productPrice) +
+            '&category=' + encodeURIComponent(productCategory) +
+            '&selectedProducts=' + encodeURIComponent(selectedProducts.join(','))
         );
+
         closeModal();
     }
 
     function closeModal() {
+        document.querySelectorAll('.product_for_combo input[type="checkbox"]').forEach(checkbox => {
+            checkbox.checked = false;  // oldindan belgilarni tozalash
+        });
+        document.getElementById('typeForPC').style.display = 'none'
+        document.getElementById('productComboDiv').style.display = 'none';
         document.getElementById('categoryModal').style.display = 'none';
     }
+
     function deleteProduct(productId) {
         if (confirm("Are you sure you want to delete this product?")) {
             const xhr = new XMLHttpRequest();
@@ -602,6 +737,11 @@
     span.onclick = function () {
         modal.style.display = "none";
     }
+    function showComboProducts() {
+        document.getElementById('productComboDiv').style.display = 'block';
+        document.getElementById('ulComboProduct').style.display = 'block';
+    }
+
 </script>
 </body>
 </html>

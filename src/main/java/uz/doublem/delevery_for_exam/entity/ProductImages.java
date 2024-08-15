@@ -2,6 +2,7 @@ package uz.doublem.delevery_for_exam.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 
 @Data
@@ -17,8 +19,8 @@ import java.util.List;
 @Entity
 public class ProductImages {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+//    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id= UUID.randomUUID().toString();
     @OneToMany(mappedBy = "id")
     private List<Product> product;
     @OneToMany(mappedBy = "id")

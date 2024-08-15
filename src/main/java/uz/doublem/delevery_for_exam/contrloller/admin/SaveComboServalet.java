@@ -1,27 +1,26 @@
 package uz.doublem.delevery_for_exam.contrloller.admin;
 
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import uz.doublem.delevery_for_exam.entity.Category;
-import uz.doublem.delevery_for_exam.repository.CategoryRepository;
-import uz.doublem.delevery_for_exam.service.CategoryService;
+import uz.doublem.delevery_for_exam.service.ProductService;
 
 import java.io.IOException;
-import java.util.HashMap;
 
-@WebServlet("/admin/saveCategory")
-public class SaveCategoryServlet  extends HttpServlet {
-    CategoryService categoryService = CategoryService.getInstance();
-
+@WebServlet("/admin/saveCombo")
+public class SaveComboServalet extends HttpServlet {
+    ProductService productService = ProductService.getInstance();
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         if (req.getParameter("id") != null&&!req.getParameter("id").isBlank()) {
-           categoryService.editCategory(req,resp);
+            productService.editCombo(req,resp);
         }else {
-            categoryService.addCategory(req,resp);
+            productService.addCombo(req,resp);
         }
+
     }
 }

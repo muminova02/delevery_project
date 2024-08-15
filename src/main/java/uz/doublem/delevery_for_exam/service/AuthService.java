@@ -28,7 +28,7 @@ public class AuthService {
             return false;
         }
         Users user = optionalUser.get();
-        if (!user.getHasConfirmed()) {
+        if (!user.isActive()) {
             response.addCookie(new Cookie("identity",null));
             response.setContentType("text/html");
             response.getWriter().write("you should confirm your account!");
@@ -95,7 +95,7 @@ public class AuthService {
             return;
         }
         Users user = optionalUser.get();
-        user.setHasConfirmed(true);
+        user.setActive(true);
         req.setAttribute("exists", true);
         req.setAttribute("user", user);
         userRepository.saveUser(user);
@@ -124,7 +124,7 @@ public class AuthService {
                     String value = cookie.getValue();
                     value = new String(Base64.getDecoder().decode(value.getBytes()));
                     Optional<Users> optionalUser = userRepository.getUserById(value);
-                    if (optionalUser.isPresent() && optionalUser.get().getHasConfirmed()) {
+                    if (optionalUser.isPresent() && optionalUser.get().isActive()) {
                         Users user = optionalUser.get();
                         req.setAttribute("users", userRepository.getUsers());
                         req.setAttribute("exists", true);

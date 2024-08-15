@@ -90,4 +90,23 @@ public class UserRepository {
             entityManager.getTransaction().commit();
         }
     }
+
+
+    public boolean updateUserActive(String userId, boolean b) {
+            EntityManager entityManager = entityManagerFactory.createEntityManager();
+            try {
+                entityManager.getTransaction().begin();
+                Users users = entityManager.find(Users.class, userId);
+                users.setActive(b);
+                entityManager.merge(users);
+                return true;
+            }catch (Exception e){
+                return false;
+            }
+            finally {
+                entityManager.getTransaction().commit();
+                entityManager.close();
+            }
+    }
+
 }

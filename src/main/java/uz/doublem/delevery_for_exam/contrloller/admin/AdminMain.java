@@ -32,6 +32,10 @@ public class AdminMain extends HttpServlet {
             List<Combo> allCombo = productRepository.getAll(Combo.class);
             req.setAttribute("combos",allCombo);
             req.getRequestDispatcher("/views/adminProduct.jsp").forward(req, resp);
+        }else if (value.equals("users")) {
+        List<Users> all = productRepository.getAll(Users.class);
+        req.setAttribute("users", all);
+        req.getRequestDispatcher("/views/adminUsers.jsp").forward(req, resp);
         }
     }
 

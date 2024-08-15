@@ -34,8 +34,6 @@ public class Users {
     @Builder.Default
     private Role role = Role.USER;
     private boolean isDeleted = false;
-    @Builder.Default
-    private Boolean hasConfirmed = false;
     private String code;
     @OneToMany(mappedBy = "user")
     private List<Order> orders;

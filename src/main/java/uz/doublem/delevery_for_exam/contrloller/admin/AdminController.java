@@ -31,7 +31,7 @@ public class AdminController extends HttpServlet {
                     String value = cookie.getValue();
                     value = new String(Base64.getDecoder().decode(value.getBytes()));
                     Optional<Users> optionalUser = userRepository.getUserById(value);
-                    if (optionalUser.isPresent() && optionalUser.get().getHasConfirmed()) {
+                    if (optionalUser.isPresent() && optionalUser.get().isActive()) {
                         Users user = optionalUser.get();
                         if (user.getRole().equals(Role.ADMIN)) {
                             req.setAttribute("users", userRepository.getUsers());
@@ -40,7 +40,7 @@ public class AdminController extends HttpServlet {
                             req.getRequestDispatcher("/views/admin_main.jsp").forward(req, resp);
                             return;
                         } else {
-                            req.getRequestDispatcher("views/index.jsp").forward(req, resp);
+                            req.getRequestDispatcher("/views/usersPage/public/index.jsp").forward(req, resp);
                             return;
                         }
                     }
@@ -50,9 +50,8 @@ public class AdminController extends HttpServlet {
             Users user = Users.builder()
                     .firstName("admin")
                     .lastName("admins")
-                    .hasConfirmed(true)
-                    .phone_number("123")
                     .isActive(true)
+                    .phone_number("123")
                     .isDeleted(false)
                     .role(Role.ADMIN)
                     .email("admin@gmail.com")

@@ -17,7 +17,7 @@ public class SignIn extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String dbAddress = getServletConfig().getInitParameter("db_address");
         req.setAttribute("sign", false);
-        req.getRequestDispatcher("/views/usersPage/public/index.jsp").forward(req, resp);
+        req.getRequestDispatcher("/views/usersPage/public/ndex.jsp").forward(req, resp);
     }
 
 

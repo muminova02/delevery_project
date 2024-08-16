@@ -299,7 +299,6 @@
     <div class="links">
     <a href="/admin/adminMainController?value=category" >Category</a>
     <a href="/admin/adminMainController?value=product">Product</a>
-    <a href="/admin/adminMainController?value=slaydBar">Add SlaydBar</a>
     <a href="/admin/adminMainController?value=users">Show Users</a>
     <a href="/admin/adminMainController?value=orders">Show Orders</a>
     </div>

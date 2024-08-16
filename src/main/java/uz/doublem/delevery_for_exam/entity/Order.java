@@ -25,7 +25,8 @@ public class Order {
     @CreationTimestamp
     private Timestamp orderDate;
     private double totalAmount;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private StatusOrder status;
     @OneToOne
     private Address address;
     @ManyToOne

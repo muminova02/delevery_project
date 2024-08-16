@@ -31,7 +31,7 @@ public class Users {
     private Timestamp createdAt;
     @Builder.Default
     private boolean isActive = false;
-    @Builder.Default
+    @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
     private boolean isDeleted = false;
     private String code;

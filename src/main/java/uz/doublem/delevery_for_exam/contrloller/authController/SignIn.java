@@ -9,23 +9,21 @@ import uz.doublem.delevery_for_exam.service.AuthService;
 
 import java.io.IOException;
 
-@WebServlet("/sign-in")
+@WebServlet("/auth/sign-in")
 public class SignIn extends HttpServlet {
-    AuthService authService = AuthService.getInstance();
-
+    AuthService authService=AuthService.getInstance();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String dbAddress = getServletConfig().getInitParameter("db_address");
-        req.setAttribute("sign", false);
-        req.getRequestDispatcher("/views/usersPage/public/ndex.jsp").forward(req, resp);
+        req.setAttribute("state",false);
+        req.getRequestDispatcher("/views/login/index.jsp").forward(req, resp);
     }
-
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        authService.signIn(req, resp);
-            resp.sendRedirect("/home");
-
-
+        if(authService.signIn(req, resp)){
+            req.getRequestDispatcher("/view/usersPage/public/index.jsp").forward(req, resp);
+        }else {
+            req.getRequestDispatcher("/view/authPage.jsp").forward(req, resp);
+        }
     }
 }

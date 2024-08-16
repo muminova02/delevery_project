@@ -14,8 +14,11 @@ public class AuthController extends HttpServlet {
     AuthService authService =AuthService.getInstance();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        authService.confirmEmail(req,resp);
-        req.getRequestDispatcher("/views/home.jsp").forward(req, resp);
+        if (authService.confirmEmail(req,resp)){
+            req.getRequestDispatcher("/views/usersPage/public/searchFood.jsp").forward(req, resp);
+        }else {
+            req.getRequestDispatcher("views/authPage.jsp").forward(req, resp);
+        }
 //        resp.setContentType("text/html");
 //        resp.getWriter().write("<h1>confirmed successfully please <a href=\"/sign-in\">login</a></h1>");
     }

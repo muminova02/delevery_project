@@ -25,13 +25,13 @@ public class AuthService {
         if (optionalUser.isEmpty() || !optionalUser.get().getPassword().equals(password)) {
             request.setAttribute("exists", false);
             response.addCookie(new Cookie("identity",null));
+            request.setAttribute("message", "sorry you should sign up");
             return false;
         }
         Users user = optionalUser.get();
         if (!user.isActive()) {
             response.addCookie(new Cookie("identity",null));
-            response.setContentType("text/html");
-            response.getWriter().write("you should confirm your account!");
+            request.setAttribute("message", "you should confirm your account!");
             return false;
         }
         request.setAttribute("user", user);
@@ -42,7 +42,6 @@ public class AuthService {
     }
 
     public boolean signUp(HttpServletRequest request, HttpServletResponse response) {
-        request.setAttribute("exists", false);
 
         String name = request.getParameter("name");
         String email = request.getParameter("email");
@@ -50,11 +49,13 @@ public class AuthService {
         String phoneNumber = request.getParameter("phoneNumber");
         if (name == null || name.isBlank() || email == null || email.isBlank() || password == null || password.isBlank()) {
             request.setAttribute("message","name email or password null");
+            request.setAttribute("exists", false);
             return false;
         }
         Optional<Users> optionalUser = userRepository.getUserByEmail(email);
         if (optionalUser.isPresent()) {
             request.setAttribute("message","this email already exists");
+            request.setAttribute("exists", false);
 
             return false;
         }
@@ -65,10 +66,12 @@ public class AuthService {
                 .phone_number(phoneNumber)
                 .code(generateCode())
                 .build();
-        userRepository.saveUser(user);
+        userRepository.save(user);
         String text = user.getEmail() + ":" + user.getCode();
         final String message = new String(Base64.getEncoder().encode(text.getBytes()));
         new Thread(() -> emailService.sendSmsToUser(user.getEmail(), message)).start();
+        request.setAttribute("message","Confirm Your email");
+        request.setAttribute("exists", true);
         return true;
     }
 
@@ -83,7 +86,7 @@ public class AuthService {
 
 
     @SneakyThrows
-    public void confirmEmail(HttpServletRequest req, HttpServletResponse resp) {
+    public boolean confirmEmail(HttpServletRequest req, HttpServletResponse resp) {
 
         String confirmation = req.getParameter("confirmation");
         confirmation = new String(Base64.getDecoder().decode(confirmation.getBytes()));
@@ -91,14 +94,15 @@ public class AuthService {
         Optional<Users> optionalUser = userRepository.getUserByEmail(split[0]);
         req.setAttribute("exists", false);
         if (optionalUser.isEmpty() || !optionalUser.get().getCode().equals(split[1])) {
-            resp.getWriter().write("something went wrong");
-            return;
+            req.setAttribute("message", "you should confirm your email");
+            return false;
         }
         Users user = optionalUser.get();
         user.setActive(true);
         req.setAttribute("exists", true);
         req.setAttribute("user", user);
-        userRepository.saveUser(user);
+        userRepository.update(user);
+        return true;
     }
 
 

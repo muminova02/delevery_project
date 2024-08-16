@@ -11,7 +11,7 @@ public class EmailService {
     @SneakyThrows
     public void sendSmsToUser(String email, String text) {
         String subject = "Account Confirmation";
-        String htmlContent = String.format("Please click this <a href=\"http://10.10.2.142:8080/auth?confirmation=%s\">link</a> in order to confirm your account", text);
+        String htmlContent = String.format("Please click this <a href=\"http://localhost:8080/auth?confirmation=%s\">link</a> in order to confirm your account", text);
 
         Properties properties = new Properties();
         properties.put("mail.smtp.host", "smtp.gmail.com");
@@ -22,7 +22,7 @@ public class EmailService {
         Authenticator auth = new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("abror01042001@gmail.com", "yrdvdspgimmmovpd");
+                return new PasswordAuthentication("mabror064@gmail.com", "dhxetbontjdmrqss");
             }
         };
 
@@ -30,7 +30,7 @@ public class EmailService {
 
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("abror01042001@gmail.com"));
+            message.setFrom(new InternetAddress("mabror064@gmail.com"));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
             message.setSubject(subject);
             message.setContent(htmlContent, "text/html");

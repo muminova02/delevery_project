@@ -23,10 +23,10 @@ public class SignUp extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (authService.signUp(req,resp)) {
-            resp.sendRedirect("/sign-in");
+            req.getRequestDispatcher("/views/authPage.jsp").forward(req, resp);
         }else {
             resp.addCookie(new Cookie("identity",null));
-            req.getRequestDispatcher("/views/home.jsp").forward(req, resp);
+            req.getRequestDispatcher("/views/authPage.jsp").forward(req, resp);
         }
 //        req.getRequestDispatcher("/views/home.jsp").forward(req, resp);
 

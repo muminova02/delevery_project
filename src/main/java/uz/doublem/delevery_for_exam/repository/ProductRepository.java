@@ -2,6 +2,7 @@ package uz.doublem.delevery_for_exam.repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import uz.doublem.delevery_for_exam.entity.Category;
 import uz.doublem.delevery_for_exam.entity.Combo;
@@ -191,5 +192,23 @@ public class ProductRepository {
     }
 
 
-
+    public List<Product> getSearchProduct(String search) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        List<Product> resultList = null;
+        try {
+            entityManager.getTransaction().begin();
+            String jpql = "SELECT pr FROM Product pr  WHERE pr.name ilike % :search %";
+            TypedQuery<Product> query = entityManager.createQuery(jpql, Product.class);
+            query.setParameter("search", search);
+            resultList = query.getResultList();
+            return resultList;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+        finally {
+            entityManager.getTransaction().commit();
+            entityManager.close();
+        }
+    }
 }

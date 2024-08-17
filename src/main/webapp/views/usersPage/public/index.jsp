@@ -53,6 +53,75 @@
             width: 40px;
             height: 40px;
         }
+        .hidden {
+            display: none;
+        }
+
+        .card {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        #order-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        #order-card .quantity {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        #order-card .quantity button {
+            padding: 5px 10px;
+            background-color: #e0e0e0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #order-card .quantity span {
+            margin: 0 10px;
+            font-size: 1.2em;
+        }
+
+        #order-card .add-to-cart {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #6a1b9a;
+            color: #fff;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #order-card .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        #order-card {
+            display: none;
+        }
+
     </style>
 </head>
 
@@ -284,7 +353,7 @@
         <% ProductService productService = ProductService.getInstance(); %>
         <% HashMap<Category, List<Product>> productsByCategory = productService.getProductsByCategory(); %>
         <% Set<Category> categories = productsByCategory.keySet(); %>
-        <div class="container">
+<%--        <div class="container">--%>
         <% for (Category category : categories) { %>
              <div class="container">
             <div class="row h-100">
@@ -292,14 +361,14 @@
                     <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"><%= category.getName() %></h5>
                 </div>
                 <% List<Product> products = productsByCategory.get(category); %>
-                <% for (Product product : products) { %>
 
                 <div class="col-12">
-                    <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false"
+                    <div class="carousel slide" id="carouselPopularItems<%= category.getId()%>" data-bs-touch="false"
             data-bs-interval="false">
                         <div class="carousel-inner">
                             <div class="carousel-item active" data-bs-interval="10000">
                                 <div class="row gx-3 h-100 align-items-center">
+                                    <% for (Product product : products) { %>
                                     <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
                                         <div class="card card-span h-100 rounded-3"><img width="250px"
             class="img-fluid rounded-3 h-100"
@@ -313,7 +382,7 @@
                                                 <span class="text-1000 fw-bold">$<%= product.getPrice()%></span>
                                             </div>
                                         </div>
-                                        <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
+                                        <div style="max-width: 270px" class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
             role="button">Order now</a></div>
                                     </div>
 
@@ -585,11 +654,11 @@
                             </div>
                         </div>
                         <button class="carousel-control-prev carousel-icon" type="button"
-            data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span
+            data-bs-target="#carouselPopularItems<%= category.getId()%>" data-bs-slide="prev"><span
             class="carousel-control-prev-icon hover-top-shadow"
             aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
                         <button class="carousel-control-next carousel-icon" type="button"
-            data-bs-target="#carouselPopularItems" data-bs-slide="next"><span
+            data-bs-target="#carouselPopularItems<%= category.getId()%>" data-bs-slide="next"><span
             class="carousel-control-next-icon hover-top-shadow"
             aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
                     </div>
@@ -597,7 +666,23 @@
             </div>
         </div>
         <% } %>
+
+        <div id="order-card" class="card hidden">
+            <button id="close-card" class="close-btn">&times;</button>
+            <img id="card-image" src="" alt="Product Image">
+            <h3 id="card-title">Product Name</h3>
+            <p id="card-description">Product Description</p>
+            <div class="quantity">
+                <button id="decrease">-</button>
+                <span id="quantity">1</span>
+                <button id="increase">+</button>
+            </div>
+            <p id="card-price">30 000 so'm</p>
+            <button id="add-to-cart" class="add-to-cart">Add to Cart</button>
         </div>
+
+
+<%--        </div>--%>
 <%--<!-- end of .container-->--%>
     </section>
     <!-- <section> close ============================-->
@@ -1521,5 +1606,38 @@
         href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600;700;900&amp;display=swap"
         rel="stylesheet">
 </body>
+
+<script>
+    document.querySelectorAll('.order-now').forEach(button => {
+        button.addEventListener('click', function() {
+            const item = this.closest('.menu-item');
+            const title = item.querySelector('h3').textContent;
+            const description = item.querySelector('p:nth-child(3)').textContent;
+            const price = item.querySelector('p:nth-child(4)').textContent;
+            const imageSrc = item.querySelector('img').src;
+
+            // Set the card content
+            document.getElementById('card-title').textContent = title;
+            document.getElementById('card-description').textContent = description;
+            document.getElementById('card-price').textContent = price;
+            document.getElementById('card-image').src = imageSrc;
+
+            // Show the card
+            document.getElementById('order-card').style.display = 'block';
+        });
+    });
+
+    document.getElementById('close-card').addEventListener('click', function() {
+        document.getElementById('order-card').style.display = 'none';
+    });
+
+    window.addEventListener('click', function(event) {
+        const card = document.getElementById('order-card');
+        if (event.target === card) {
+            card.style.display = 'none';
+        }
+    });
+
+</script>
 
 </html>

@@ -35,7 +35,7 @@ public class ProductService {
         String id = req.getParameter("id");
         String name = req.getParameter("name");
         String productDescription = req.getParameter("description");
-        String productPrice = req.getParameter("prise");
+        String productPrice = req.getParameter("price");
         String productCategoryId = req.getParameter("category");
         Category category = categoryRepository.get(productCategoryId);
         if (name != null && !name.trim().isEmpty()) {
@@ -54,7 +54,7 @@ public class ProductService {
     public void addProduct(HttpServletRequest req, HttpServletResponse resp) {
         String name = req.getParameter("name");
         String productDescription = req.getParameter("description");
-        String productPrice = req.getParameter("prise");
+        String productPrice = req.getParameter("price");
         String productCategoryId = req.getParameter("category");
         Category category = categoryRepository.get(productCategoryId);
         if (name != null && !name.trim().isEmpty()) {

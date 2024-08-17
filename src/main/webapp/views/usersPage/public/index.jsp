@@ -1,4 +1,13 @@
+<%@ page import="uz.doublem.delevery_for_exam.repository.DiscountItemRepository" %>
+<%@ page import="uz.doublem.delevery_for_exam.entity.DiscountItem" %>
+<%@ page import="java.util.List" %>
+<%@ page import="uz.doublem.delevery_for_exam.service.ProductService" %>
+<%@ page import="uz.doublem.delevery_for_exam.entity.Category" %>
+<%@ page import="uz.doublem.delevery_for_exam.entity.Product" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.Set" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="en-US" dir="ltr">
 
@@ -34,6 +43,17 @@
     <!-- ===============================================-->
     <link href="/views/usersPage/public/assets/css/theme.css" rel="stylesheet" />
 
+    <style>
+        .profile {
+            float: right;
+            margin-right: 15px;
+        }
+        .profile img {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+        }
+    </style>
 </head>
 
 
@@ -62,14 +82,24 @@
                     </p>
                 </div>
                 <form class="d-flex mt-4 mt-lg-0 ms-lg-auto ms-xl-0" action="/user/PageMain">
-                    <div class="input-group-icon pe-2"><i class="fas fa-search input-box-icon text-primary"></i>
-                        <input class="form-control border-0 input-box bg-100" type="search"
-                               placeholder="Search Food" aria-label="Search" />
+                    <div class="input-group-icon pe-2">
+                        <i class="fas fa-search input-box-icon text-primary"></i>
+                        <input class="form-control border-0 input-box bg-100" type="search" placeholder="Search Food" aria-label="Search" />
                     </div>
-                    <button name="login" value="login" class="btn btn-white shadow-warning text-warning" type="submit"><i
-                            class="fas fa-user me-2"></i>Login
-                    </button>
+                    <c:if test="${not exists or user == null}">
+                        <button name="login" value="login" class="btn btn-white shadow-warning text-warning" type="submit">
+                            <i class="fas fa-user me-2"></i>Login
+                        </button>
+                    </c:if>
                 </form>
+
+                <c:if test="${exists and user != null}">
+                    <div class="user-in">
+                        <div class="profile">
+                            <img src="/views/attachments/userImage.png" alt="Profile" onclick="location.href='/profile?id=${user.id}'"/>
+                        </div>
+                    </div>
+                </c:if>
             </div>
         </div>
     </nav>
@@ -153,102 +183,37 @@
 
         <div class="container">
             <div class="row h-100 gx-2 mt-7">
-                <div class="col-sm-6 col-lg-3 mb-3 mb-md-0 h-100 pb-4">
-                    <div class="card card-span h-100">
-                        <div class="position-relative"><img class="img-fluid rounded-3 w-100"
-                                                            src="/views/usersPage/public/assets/img/gallery/discount-item-1.png"
-                                                            alt="..." />
-                            <div class="card-actions">
-                                <div class="badge badge-foodwagon bg-primary p-4">
-                                    <div class="d-flex flex-between-center">
-                                        <div class="text-white fs-7">15</div>
-                                        <div class="d-block text-white fs-2">% <br />
-                                            <div class="fw-normal fs-1 mt-2">Off</div>
+                <% DiscountItemRepository discountItemRepository = DiscountItemRepository.getInstance(); %>
+                <% List<DiscountItem> items = discountItemRepository.getAll();
+                request.setAttribute("items",items);
+                %>
+                <c:forEach var="item" items="${items}">
+                    <div class="col-sm-6 col-lg-3 mb-3 mb-md-0 h-100 pb-4">
+                        <div class="card card-span h-100">
+                            <div class="position-relative">
+                                <img class="img-fluid rounded-3 w-100" src="/download?id=${item.imageUrl}" alt="${item.title}" />
+                                <div class="card-actions">
+                                    <div class="badge badge-foodwagon bg-primary p-4">
+                                        <div class="d-flex flex-between-center">
+                                            <div class="text-white fs-7">${item.discountPercentage}</div>
+                                            <div class="d-block text-white fs-2">% <br />
+                                                <div class="fw-normal fs-1 mt-2">Off</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="card-body px-0">
-                            <h5 class="fw-bold text-1000 text-truncate">Flat Hill Slingback</h5><span
-                                class="badge bg-soft-danger py-2 px-3"><span class="fs-1 text-danger">6 days
-                                            Remaining</span></span>
-                        </div>
-                        <a class="stretched-link" href="#"></a>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-lg-3 mb-3 mb-md-0 h-100 pb-4">
-                    <div class="card card-span h-100">
-                        <div class="position-relative"><img class="img-fluid rounded-3 w-100"
-                                                            src="/views/usersPage/public/assets/img/gallery/discount-item-2.png"
-                                                            alt="..." />
-                            <div class="card-actions">
-                                <div class="badge badge-foodwagon bg-primary p-4">
-                                    <div class="d-flex flex-between-center">
-                                        <div class="text-white fs-7">10</div>
-                                        <div class="d-block text-white fs-2">% <br />
-                                            <div class="fw-normal fs-1 mt-2">Off</div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="card-body px-0">
+                                <h5 class="fw-bold text-1000 text-truncate">${item.title}</h5>
+                                <span class="badge bg-soft-danger py-2 px-3">
+                            <span class="fs-1 text-danger">${item.remainingDays}</span>
+                        </span>
                             </div>
+                            <a class="stretched-link" href="${item.link}"></a>
                         </div>
-                        <div class="card-body px-0">
-                            <h5 class="fw-bold text-1000 text-truncate">Ocean Blue Ring</h5><span
-                                class="badge bg-soft-danger py-2 px-3"><span class="fs-1 text-danger">6 days
-                                            Remaining</span></span>
-                        </div>
-                        <a class="stretched-link" href="#"></a>
                     </div>
-                </div>
-                <div class="col-sm-6 col-lg-3 mb-3 mb-md-0 h-100 pb-4">
-                    <div class="card card-span h-100">
-                        <div class="position-relative"><img class="img-fluid rounded-3 w-100"
-                                                            src="/views/usersPage/public/assets/img/gallery/discount-item-3.png"
-                                                            alt="..." />
-                            <div class="card-actions">
-                                <div class="badge badge-foodwagon bg-primary p-4">
-                                    <div class="d-flex flex-between-center">
-                                        <div class="text-white fs-7">25</div>
-                                        <div class="d-block text-white fs-2">% <br />
-                                            <div class="fw-normal fs-1 mt-2">Off</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body px-0">
-                            <h5 class="fw-bold text-1000 text-truncate">Brown Leathered Wallet</h5><span
-                                class="badge bg-soft-danger py-2 px-3"><span class="fs-1 text-danger">6 days
-                                            Remaining</span></span>
-                        </div>
-                        <a class="stretched-link" href="#"></a>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-lg-3 mb-3 mb-md-0 h-100 pb-4">
-                    <div class="card card-span h-100">
-                        <div class="position-relative"><img class="img-fluid rounded-3 w-100"
-                                                            src="/views/usersPage/public/assets/img/gallery/discount-item-4.png"
-                                                            alt="..." />
-                            <div class="card-actions">
-                                <div class="badge badge-foodwagon bg-primary p-4">
-                                    <div class="d-flex flex-between-center">
-                                        <div class="text-white fs-7">20</div>
-                                        <div class="d-block text-white fs-2">% <br />
-                                            <div class="fw-normal fs-1 mt-2">Off</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body px-0">
-                            <h5 class="fw-bold text-1000 text-truncate">Silverside Wristwatch</h5><span
-                                class="badge bg-soft-danger py-2 px-3"><span class="fs-1 text-danger">6 days
-                                            Remaining</span></span>
-                        </div>
-                        <a class="stretched-link" href="#"></a>
-                    </div>
-                </div>
+                </c:forEach>
+
             </div>
         </div><!-- end of .container-->
 
@@ -315,186 +280,132 @@
     <!-- <section> begin ============================-->
     <section class="py-4 overflow-hidden">
 
+
+        <% ProductService productService = ProductService.getInstance(); %>
+        <% HashMap<Category, List<Product>> productsByCategory = productService.getProductsByCategory(); %>
+        <% Set<Category> categories = productsByCategory.keySet(); %>
         <div class="container">
+        <% for (Category category : categories) { %>
+             <div class="container">
             <div class="row h-100">
                 <div class="col-lg-7 mx-auto text-center mt-7 mb-5">
-                    <h5 class="fw-bold fs-3 fs-lg-5 lh-sm">Popular items</h5>
+                    <h5 class="fw-bold fs-3 fs-lg-5 lh-sm"><%= category.getName() %></h5>
                 </div>
+                <% List<Product> products = productsByCategory.get(category); %>
+                <% for (Product product : products) { %>
+
                 <div class="col-12">
                     <div class="carousel slide" id="carouselPopularItems" data-bs-touch="false"
-                         data-bs-interval="false">
+            data-bs-interval="false">
                         <div class="carousel-inner">
                             <div class="carousel-item active" data-bs-interval="10000">
                                 <div class="row gx-3 h-100 align-items-center">
                                     <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                                        <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/cheese-burger.png"
-                                                alt="..." />
+                                        <div class="card card-span h-100 rounded-3"><img width="250px"
+            class="img-fluid rounded-3 h-100"
+            src="/download?id=<%= product.getProductImages().getId()%>"
+            alt="..." />
                                             <div class="card-body ps-0">
-                                                <h5 class="fw-bold text-1000 text-truncate mb-1">Cheese Burger
-                                                </h5>
-                                                <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Burger Arena</span></div>
-                                                <span class="text-1000 fw-bold">$3.88</span>
+                                                <h5 class="fw-bold text-1000 text-truncate mb-1"><%= product.getName()%>
+                    </h5>
+                                                <div><span
+            class="text-primary"> <%= product.getDescription()%> </span></div>
+                                                <span class="text-1000 fw-bold">$<%= product.getPrice()%></span>
                                             </div>
                                         </div>
                                         <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
+            role="button">Order now</a></div>
                                     </div>
-                                    <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                                        <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/toffes-cake.png"
-                                                alt="..." />
-                                            <div class="card-body ps-0">
-                                                <h5 class="fw-bold text-1000 text-truncate mb-1">Toffe's Cake
-                                                </h5>
-                                                <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Top Sticks</span></div>
-                                                <span class="text-1000 fw-bold">$4.00</span>
-                                            </div>
-                                        </div>
-                                        <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
-                                    </div>
-                                    <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                                        <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/dancake.png"
-                                                alt="..." />
-                                            <div class="card-body ps-0">
-                                                <h5 class="fw-bold text-1000 text-truncate mb-1">Dancake</h5>
-                                                <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Cake World</span></div>
-                                                <span class="text-1000 fw-bold">$1.99</span>
-                                            </div>
-                                        </div>
-                                        <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
-                                    </div>
-                                    <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                                        <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/crispy-sandwitch.png"
-                                                alt="..." />
-                                            <div class="card-body ps-0">
-                                                <h5 class="fw-bold text-1000 text-truncate mb-1">Crispy
-                                                    Sandwitch</h5>
-                                                <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Fastfood Dine</span></div>
-                                                <span class="text-1000 fw-bold">$3.00</span>
-                                            </div>
-                                        </div>
-                                        <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
-                                    </div>
-                                    <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
-                                        <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/thai-soup.png"
-                                                alt="..." />
-                                            <div class="card-body ps-0">
-                                                <h5 class="fw-bold text-1000 text-truncate mb-1">Thai Soup</h5>
-                                                <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Foody Man</span></div>
-                                                <span class="text-1000 fw-bold">$2.79</span>
-                                            </div>
-                                        </div>
-                                        <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
-                                    </div>
+
+                                    <% } %>
+
+<%--                                    =================================--%>
                                 </div>
                             </div>
                             <div class="carousel-item" data-bs-interval="5000">
                                 <div class="row gx-3 h-100 align-items-center">
                                     <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
                                         <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/cheese-burger.png"
-                                                alt="..." />
+            class="img-fluid rounded-3 h-100"
+            src="/views/usersPage/public/assets/img/gallery/cheese-burger.png"
+            alt="..." />
                                             <div class="card-body ps-0">
                                                 <h5 class="fw-bold text-1000 text-truncate mb-1">Cheese Burger
-                                                </h5>
+                    </h5>
                                                 <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Burger Arena</span></div>
+            class="fas fa-map-marker-alt"></i></span><span
+            class="text-primary">Burger Arena</span></div>
                                                 <span class="text-1000 fw-bold">$3.88</span>
                                             </div>
                                         </div>
                                         <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
+            role="button">Order now</a></div>
                                     </div>
                                     <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
                                         <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/toffes-cake.png"
-                                                alt="..." />
+            class="img-fluid rounded-3 h-100"
+            src="/views/usersPage/public/assets/img/gallery/toffes-cake.png"
+            alt="..." />
                                             <div class="card-body ps-0">
                                                 <h5 class="fw-bold text-1000 text-truncate mb-1">Toffe's Cake
-                                                </h5>
+                    </h5>
                                                 <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Top Sticks</span></div>
+            class="fas fa-map-marker-alt"></i></span><span
+            class="text-primary">Top Sticks</span></div>
                                                 <span class="text-1000 fw-bold">$4.00</span>
                                             </div>
                                         </div>
                                         <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
+            role="button">Order now</a></div>
                                     </div>
                                     <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
                                         <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/dancake.png"
-                                                alt="..." />
+            class="img-fluid rounded-3 h-100"
+            src="/views/usersPage/public/assets/img/gallery/dancake.png"
+            alt="..." />
                                             <div class="card-body ps-0">
                                                 <h5 class="fw-bold text-1000 text-truncate mb-1">Dancake</h5>
                                                 <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Cake World</span></div>
+            class="fas fa-map-marker-alt"></i></span><span
+            class="text-primary">Cake World</span></div>
                                                 <span class="text-1000 fw-bold">$1.99</span>
                                             </div>
                                         </div>
                                         <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
+            role="button">Order now</a></div>
                                     </div>
                                     <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
                                         <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/crispy-sandwitch.png"
-                                                alt="..." />
+            class="img-fluid rounded-3 h-100"
+            src="/views/usersPage/public/assets/img/gallery/crispy-sandwitch.png"
+            alt="..." />
                                             <div class="card-body ps-0">
                                                 <h5 class="fw-bold text-1000 text-truncate mb-1">Crispy
-                                                    Sandwitch</h5>
+            Sandwitch</h5>
                                                 <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Fastfood Dine</span></div>
+            class="fas fa-map-marker-alt"></i></span><span
+            class="text-primary">Fastfood Dine</span></div>
                                                 <span class="text-1000 fw-bold">$3.00</span>
                                             </div>
                                         </div>
                                         <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
+            role="button">Order now</a></div>
                                     </div>
                                     <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
                                         <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/thai-soup.png"
-                                                alt="..." />
+            class="img-fluid rounded-3 h-100"
+            src="/views/usersPage/public/assets/img/gallery/thai-soup.png"
+            alt="..." />
                                             <div class="card-body ps-0">
                                                 <h5 class="fw-bold text-1000 text-truncate mb-1">Thai Soup</h5>
                                                 <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Foody Man</span></div>
+            class="fas fa-map-marker-alt"></i></span><span
+            class="text-primary">Foody Man</span></div>
                                                 <span class="text-1000 fw-bold">$2.79</span>
                                             </div>
                                         </div>
                                         <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
+            role="button">Order now</a></div>
                                     </div>
                                 </div>
                             </div>
@@ -502,86 +413,86 @@
                                 <div class="row gx-3 h-100 align-items-center">
                                     <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
                                         <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/cheese-burger.png"
-                                                alt="..." />
+            class="img-fluid rounded-3 h-100"
+            src="/views/usersPage/public/assets/img/gallery/cheese-burger.png"
+            alt="..." />
                                             <div class="card-body ps-0">
                                                 <h5 class="fw-bold text-1000 text-truncate mb-1">Cheese Burger
-                                                </h5>
+                    </h5>
                                                 <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Burger Arena</span></div>
+            class="fas fa-map-marker-alt"></i></span><span
+            class="text-primary">Burger Arena</span></div>
                                                 <span class="text-1000 fw-bold">$3.88</span>
                                             </div>
                                         </div>
                                         <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
+            role="button">Order now</a></div>
                                     </div>
                                     <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
                                         <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/toffes-cake.png"
-                                                alt="..." />
+            class="img-fluid rounded-3 h-100"
+            src="/views/usersPage/public/assets/img/gallery/toffes-cake.png"
+            alt="..." />
                                             <div class="card-body ps-0">
                                                 <h5 class="fw-bold text-1000 text-truncate mb-1">Toffe's Cake
-                                                </h5>
+                    </h5>
                                                 <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Top Sticks</span></div>
+            class="fas fa-map-marker-alt"></i></span><span
+            class="text-primary">Top Sticks</span></div>
                                                 <span class="text-1000 fw-bold">$4.00</span>
                                             </div>
                                         </div>
                                         <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
+            role="button">Order now</a></div>
                                     </div>
                                     <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
                                         <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/dancake.png"
-                                                alt="..." />
+            class="img-fluid rounded-3 h-100"
+            src="/views/usersPage/public/assets/img/gallery/dancake.png"
+            alt="..." />
                                             <div class="card-body ps-0">
                                                 <h5 class="fw-bold text-1000 text-truncate mb-1">Dancake</h5>
                                                 <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Cake World</span></div>
+            class="fas fa-map-marker-alt"></i></span><span
+            class="text-primary">Cake World</span></div>
                                                 <span class="text-1000 fw-bold">$1.99</span>
                                             </div>
                                         </div>
                                         <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
+            role="button">Order now</a></div>
                                     </div>
                                     <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
                                         <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/crispy-sandwitch.png"
-                                                alt="..." />
+            class="img-fluid rounded-3 h-100"
+            src="/views/usersPage/public/assets/img/gallery/crispy-sandwitch.png"
+            alt="..." />
                                             <div class="card-body ps-0">
                                                 <h5 class="fw-bold text-1000 text-truncate mb-1">Crispy
-                                                    Sandwitch</h5>
+            Sandwitch</h5>
                                                 <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Fastfood Dine</span></div>
+            class="fas fa-map-marker-alt"></i></span><span
+            class="text-primary">Fastfood Dine</span></div>
                                                 <span class="text-1000 fw-bold">$3.00</span>
                                             </div>
                                         </div>
                                         <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
+            role="button">Order now</a></div>
                                     </div>
                                     <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
                                         <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/thai-soup.png"
-                                                alt="..." />
+            class="img-fluid rounded-3 h-100"
+            src="/views/usersPage/public/assets/img/gallery/thai-soup.png"
+            alt="..." />
                                             <div class="card-body ps-0">
                                                 <h5 class="fw-bold text-1000 text-truncate mb-1">Thai Soup</h5>
                                                 <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Foody Man</span></div>
+            class="fas fa-map-marker-alt"></i></span><span
+            class="text-primary">Foody Man</span></div>
                                                 <span class="text-1000 fw-bold">$2.79</span>
                                             </div>
                                         </div>
                                         <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
+            role="button">Order now</a></div>
                                     </div>
                                 </div>
                             </div>
@@ -589,103 +500,105 @@
                                 <div class="row gx-3 h-100 align-items-center">
                                     <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
                                         <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/cheese-burger.png"
-                                                alt="..." />
+            class="img-fluid rounded-3 h-100"
+            src="/views/usersPage/public/assets/img/gallery/cheese-burger.png"
+            alt="..." />
                                             <div class="card-body ps-0">
                                                 <h5 class="fw-bold text-1000 text-truncate mb-1">Cheese Burger
-                                                </h5>
+                    </h5>
                                                 <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Burger Arena</span></div>
+            class="fas fa-map-marker-alt"></i></span><span
+            class="text-primary">Burger Arena</span></div>
                                                 <span class="text-1000 fw-bold">$3.88</span>
                                             </div>
                                         </div>
                                         <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
+            role="button">Order now</a></div>
                                     </div>
                                     <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
                                         <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/toffes-cake.png"
-                                                alt="..." />
+            class="img-fluid rounded-3 h-100"
+            src="/views/usersPage/public/assets/img/gallery/toffes-cake.png"
+            alt="..." />
                                             <div class="card-body ps-0">
                                                 <h5 class="fw-bold text-1000 text-truncate mb-1">Toffe's Cake
-                                                </h5>
+                    </h5>
                                                 <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Top Sticks</span></div>
+            class="fas fa-map-marker-alt"></i></span><span
+            class="text-primary">Top Sticks</span></div>
                                                 <span class="text-1000 fw-bold">$4.00</span>
                                             </div>
                                         </div>
                                         <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
+            role="button">Order now</a></div>
                                     </div>
                                     <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
                                         <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/dancake.png"
-                                                alt="..." />
+            class="img-fluid rounded-3 h-100"
+            src="/views/usersPage/public/assets/img/gallery/dancake.png"
+            alt="..." />
                                             <div class="card-body ps-0">
                                                 <h5 class="fw-bold text-1000 text-truncate mb-1">Dancake</h5>
                                                 <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Cake World</span></div>
+            class="fas fa-map-marker-alt"></i></span><span
+            class="text-primary">Cake World</span></div>
                                                 <span class="text-1000 fw-bold">$1.99</span>
                                             </div>
                                         </div>
                                         <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
+            role="button">Order now</a></div>
                                     </div>
                                     <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
                                         <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/crispy-sandwitch.png"
-                                                alt="..." />
+            class="img-fluid rounded-3 h-100"
+            src="/views/usersPage/public/assets/img/gallery/crispy-sandwitch.png"
+            alt="..." />
                                             <div class="card-body ps-0">
                                                 <h5 class="fw-bold text-1000 text-truncate mb-1">Crispy
-                                                    Sandwitch</h5>
+            Sandwitch</h5>
                                                 <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Fastfood Dine</span></div>
+            class="fas fa-map-marker-alt"></i></span><span
+            class="text-primary">Fastfood Dine</span></div>
                                                 <span class="text-1000 fw-bold">$3.00</span>
                                             </div>
                                         </div>
                                         <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
+            role="button">Order now</a></div>
                                     </div>
                                     <div class="col-sm-6 col-md-4 col-xl mb-5 h-100">
                                         <div class="card card-span h-100 rounded-3"><img
-                                                class="img-fluid rounded-3 h-100"
-                                                src="/views/usersPage/public/assets/img/gallery/thai-soup.png"
-                                                alt="..." />
+            class="img-fluid rounded-3 h-100"
+            src="/views/usersPage/public/assets/img/gallery/thai-soup.png"
+            alt="..." />
                                             <div class="card-body ps-0">
                                                 <h5 class="fw-bold text-1000 text-truncate mb-1">Thai Soup</h5>
                                                 <div><span class="text-warning me-2"><i
-                                                        class="fas fa-map-marker-alt"></i></span><span
-                                                        class="text-primary">Foody Man</span></div>
+            class="fas fa-map-marker-alt"></i></span><span
+            class="text-primary">Foody Man</span></div>
                                                 <span class="text-1000 fw-bold">$2.79</span>
                                             </div>
                                         </div>
                                         <div class="d-grid gap-2"><a class="btn btn-lg btn-danger" href="#!"
-                                                                     role="button">Order now</a></div>
+            role="button">Order now</a></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <button class="carousel-control-prev carousel-icon" type="button"
-                                data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span
-                                class="carousel-control-prev-icon hover-top-shadow"
-                                aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+            data-bs-target="#carouselPopularItems" data-bs-slide="prev"><span
+            class="carousel-control-prev-icon hover-top-shadow"
+            aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
                         <button class="carousel-control-next carousel-icon" type="button"
-                                data-bs-target="#carouselPopularItems" data-bs-slide="next"><span
-                                class="carousel-control-next-icon hover-top-shadow"
-                                aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
+            data-bs-target="#carouselPopularItems" data-bs-slide="next"><span
+            class="carousel-control-next-icon hover-top-shadow"
+            aria-hidden="true"></span><span class="visually-hidden">Next </span></button>
                     </div>
                 </div>
             </div>
-        </div><!-- end of .container-->
-
+        </div>
+        <% } %>
+        </div>
+<%--<!-- end of .container-->--%>
     </section>
     <!-- <section> close ============================-->
     <!-- ============================================-->

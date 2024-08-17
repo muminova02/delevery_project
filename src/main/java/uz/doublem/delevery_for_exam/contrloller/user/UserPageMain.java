@@ -3,6 +3,7 @@ package uz.doublem.delevery_for_exam.contrloller.user;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,6 +28,7 @@ public class UserPageMain extends HttpServlet {
         if (search != null && !search.isEmpty() || !login.equals("login")) {
             userService.getSearchFood(search,req,resp);
         }else {
+            resp.addCookie(new Cookie("identity",null));
             req.getRequestDispatcher("/views/authPage.jsp").forward(req, resp);
         }
     }

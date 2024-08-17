@@ -36,7 +36,6 @@ public class AuthService {
         }
         request.setAttribute("user", user);
         Cookie cookie = new Cookie("identity", new String(Base64.getEncoder().encode(user.getId().getBytes())));
-
         response.addCookie(cookie);
         return true;
     }
@@ -99,9 +98,9 @@ public class AuthService {
         }
         Users user = optionalUser.get();
         user.setActive(true);
-        req.setAttribute("exists", true);
-        req.setAttribute("user", user);
         userRepository.update(user);
+        req.setAttribute("exists", true);
+        req.setAttribute("user",user);
         return true;
     }
 
@@ -130,7 +129,7 @@ public class AuthService {
                     Optional<Users> optionalUser = userRepository.getUserById(value);
                     if (optionalUser.isPresent() && optionalUser.get().isActive()) {
                         Users user = optionalUser.get();
-                        req.setAttribute("users", userRepository.getUsers());
+//                        req.setAttribute("users", userRepository.getUsers());
                         req.setAttribute("exists", true);
                         req.setAttribute("user", user);
                         return true;

@@ -17,10 +17,22 @@ public class HomePage extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        enterWithHome(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        enterWithHome(req, resp);
+    }
+
+    private void enterWithHome(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (authService.authorization(req, resp)) {
             if (((Users) req.getAttribute("user")).getRole().equals(Role.ADMIN)) {
-                req.getRequestDispatcher("/views/admin").forward(req, resp);
+                req.getRequestDispatcher("/admin").forward(req, resp);
+            }else {
+                req.getRequestDispatcher("/views/usersPage/public/index.jsp").forward(req, resp);
             }
+            return;
         }
         req.setAttribute("message","something went wrong please sign in again");
         req.getRequestDispatcher("/views/home.jsp").forward(req, resp);

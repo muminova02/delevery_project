@@ -15,7 +15,8 @@ public class AuthController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (authService.confirmEmail(req,resp)){
-            req.getRequestDispatcher("/views/usersPage/public/searchFood.jsp").forward(req, resp);
+            req.setAttribute("exists", true);
+            resp.sendRedirect("/views/usersPage/public/index.jsp");
         }else {
             req.getRequestDispatcher("views/authPage.jsp").forward(req, resp);
         }

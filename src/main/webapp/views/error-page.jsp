@@ -88,7 +88,7 @@
     </h1>
 </div>
 <div>
-    <a href="/auth/sign-in">sign in</a>
+    <a href="/home">sign in</a>
 </div>
 
 </body>

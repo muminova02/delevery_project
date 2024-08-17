@@ -10,7 +10,7 @@ import uz.doublem.delevery_for_exam.service.AuthService;
 
 import java.io.IOException;
 
-@WebServlet("/sign-up")
+@WebServlet("/auth/sign-up")
 public class SignUp extends HttpServlet {
     AuthService authService = AuthService.getInstance();
     @Override

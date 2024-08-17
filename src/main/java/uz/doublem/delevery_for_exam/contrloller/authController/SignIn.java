@@ -2,6 +2,7 @@ package uz.doublem.delevery_for_exam.contrloller.authController;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,9 +22,10 @@ public class SignIn extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if(authService.signIn(req, resp)){
-            req.getRequestDispatcher("/view/usersPage/public/index.jsp").forward(req, resp);
+            req.getRequestDispatcher("/home").forward(req, resp);
         }else {
-            req.getRequestDispatcher("/view/authPage.jsp").forward(req, resp);
+            resp.addCookie(new Cookie("identity",null));
+            req.getRequestDispatcher("/views/authPage.jsp").forward(req, resp);
         }
     }
 }

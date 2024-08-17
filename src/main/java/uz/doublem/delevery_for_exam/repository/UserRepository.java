@@ -45,10 +45,25 @@ public class UserRepository {
     }
 
     public Optional<Users> getUserByEmail(String email) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
 
-        return Optional.empty();
+            // JPQL yordamida qidiruv amalga oshirilmoqda
+            Users user = entityManager.createQuery("SELECT u FROM Users u WHERE u.email = :email", Users.class)
+                    .setParameter("email", email)
+                    .getSingleResult();
 
+            entityManager.getTransaction().commit();
+            return Optional.of(user);
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            return Optional.empty();
+        } finally {
+            entityManager.close();
+        }
     }
+
 
     public void delete(String id) {
 

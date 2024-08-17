@@ -67,7 +67,6 @@
         position: absolute;
         width: 280px;
         transition: .5s;
-
     }
     #email_exist_box {
         position: fixed;
@@ -165,14 +164,14 @@
         </div>
 
 
-        <form action="/sign-in" id="login" class="input-group" method="post">
+        <form action="/auth/sign-in" id="login" class="input-group" method="post">
             <input type="text" class="input-field" name="email" placeholder="User Email" required>
             <input type="text" class="input-field" name="password" placeholder="Enter Password" required>
             <input type="checkbox" class="check-box"><span>Remember Password</span>
             <button type="submit" class="submit-btn">Log in</button>
         </form>
 
-        <form action="/sign-up" id="register" class="input-group" method="post">
+        <form action="/auth/sign-up" id="register" class="input-group" method="post">
             <input type="text" class="input-field" name="name" placeholder="User Name" required>
             <input type="text" class="input-field" name="email" placeholder="Email " required>
             <input type="text" class="input-field" name="password" placeholder="Enter Password" required>
@@ -234,8 +233,9 @@
     // Show the alert box if exists is true
     <c:if test="${exists}">
     document.getElementById("email_exist_box").style.display = "block";
-    document.getElementById("email_exist_box").style.background = "yellow";
+    document.getElementById("email_exist_box").style.background = "lawngreen";
     </c:if>
+    document.getElementById("email_exist_box").style.display = "block";
 </script>
 </body>
 </html>
